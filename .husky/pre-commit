@@ -1,0 +1,3 @@
+pnpm lint
+pnpm run format
+git add .
