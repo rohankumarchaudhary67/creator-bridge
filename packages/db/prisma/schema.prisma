@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String      @id @default(uuid())
+  email     String      @unique
+  name      String?
+  image     String?
+  role      Role        @default(Creator)
+  sessionToken String?
+  createdAt DateTime    @default(now())
+  YTCreator YTCreator[]
+  YTEditor  YTEditor[]
+  sentNotifications    Notification[] @relation("Sender")
+  receivedNotifications Notification[] @relation("Receiver")
+}
+
+model YTCreator {
+  id           String    @id @default(uuid())
+  ownerId      String
+  owner        User      @relation(fields: [ownerId], references: [id])
+  accessTokenn String?
+  refreshToken String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  YTEditor     YTEditor? @relation(fields: [yTEditorId], references: [id])
+  yTEditorId   String?
+  Video Video[]
+}
+
+model YTEditor {
+  id       String      @id @default(uuid())
+  userId   String
+  user     User        @relation(fields: [userId], references: [id])
+  YTAccess YTCreator[]
+  Video Video[]
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  senderId   String
+  sender     User     @relation("Sender", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User     @relation("Receiver", fields: [receiverId], references: [id])
+  status     String   // Status of the notification
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Video {
+  id          Int        @id @default(autoincrement())
+  editorId    String?
+  editor      YTEditor?  @relation(fields: [editorId], references: [id])
+  creatorId   String
+  creator     YTCreator  @relation(fields: [creatorId], references: [id])
+  title       String
+  description String?
+  tags        String[]
+  status      VideoStatus
+  video       String     // Video URL or path
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+enum Role {
+  Creator
+  Editor
+  NoRole
+}
+
+enum VideoStatus {
+  Draft
+  Published
+}
