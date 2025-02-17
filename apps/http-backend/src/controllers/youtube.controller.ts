@@ -10,17 +10,23 @@ import { google } from 'googleapis';
 
 const youtubeAuth = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
-        const userId = req.body.id;
+        const { id: userId } = req.body;
+
+        if (!userId) {
+            return res
+                .status(400)
+                .json(new ApiError(400, 'User ID is required'));
+        }
 
         try {
             const oauth2Client = new OAuth2Client(
-                process.env.YOUTUBE_CLIENT_ID as string,
-                process.env.YOUTUBE_CLIENT_SECRET as string,
-                process.env.YOUTUBE_REDIRECT_URI as string
+                process.env.YOUTUBE_CLIENT_ID!,
+                process.env.YOUTUBE_CLIENT_SECRET!,
+                process.env.YOUTUBE_REDIRECT_URI!
             );
 
             const stateObj = {
-                userId: userId,
+                userId,
                 csrf: crypto.randomBytes(16).toString('hex'),
             };
 
@@ -37,7 +43,7 @@ const youtubeAuth = asyncHandler(
                 access_type: 'offline',
                 scope: scopes,
                 prompt: 'consent',
-                state: state,
+                state,
             });
 
             return res
@@ -46,11 +52,11 @@ const youtubeAuth = asyncHandler(
                     new ApiResponse(
                         200,
                         { authUrl },
-                        'Youtube auth url generated'
+                        'YouTube auth URL generated'
                     )
                 );
         } catch (error) {
-            console.log(error);
+            console.error('Error generating YouTube auth URL:', error);
             return res
                 .status(500)
                 .json(new ApiError(500, 'Internal server error'));
@@ -62,25 +68,36 @@ const youtubeCallback = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
         try {
             const { code, state } = req.query;
-            let userId;
+            if (!code || !state) {
+                return res
+                    .status(400)
+                    .json(
+                        new ApiError(
+                            400,
+                            'Authorization code and state are required'
+                        )
+                    );
+            }
 
+            let userId;
             try {
                 const stateObj = JSON.parse(
                     Buffer.from(state as string, 'base64').toString('utf-8')
                 );
                 userId = stateObj.userId;
             } catch (error) {
-                return res.status(400).json(new ApiError(400, 'Invalid state'));
+                return res
+                    .status(400)
+                    .json(new ApiError(400, 'Invalid state format'));
             }
 
             const oauth2Client = new OAuth2Client(
-                process.env.YOUTUBE_CLIENT_ID as string,
-                process.env.YOUTUBE_CLIENT_SECRET as string,
-                process.env.YOUTUBE_REDIRECT_URI as string
+                process.env.YOUTUBE_CLIENT_ID!,
+                process.env.YOUTUBE_CLIENT_SECRET!,
+                process.env.YOUTUBE_REDIRECT_URI!
             );
 
             const token = await oauth2Client.getToken(code as string);
-
             oauth2Client.setCredentials(token.tokens);
 
             const youtube = google.youtube({
@@ -93,42 +110,45 @@ const youtubeCallback = asyncHandler(
                 mine: true,
             });
 
-            // Extract channel data
             const channel = response.data.items?.[0];
-
             if (!channel) {
                 return res
                     .status(404)
                     .json(new ApiError(404, 'No YouTube channel found'));
             }
 
+            const creator = await prisma.youtubeCreator.findFirst({
+                where: { userId },
+            });
+            if (!creator) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Creator not found'));
+            }
+
             await prisma.youtubeChannel.create({
                 data: {
-                    ownerId: userId,
+                    ownerId: creator.id!,
                     channelId: channel.id!,
                     channelTitle: channel.snippet?.title!,
-                    channelDescription: channel.snippet?.description!,
-                    subscriberCount: channel.statistics?.subscriberCount!
-                        ? parseInt(channel.statistics.subscriberCount!)
-                        : 0,
-                    videoCount: channel.statistics?.videoCount!
-                        ? parseInt(channel.statistics.videoCount!)
-                        : 0,
-                    thumbnailUrl: channel.snippet?.thumbnails?.high?.url! || '',
+                    channelDescription: channel.snippet?.description || '',
+                    subscriberCount: parseInt(
+                        channel.statistics?.subscriberCount || '0'
+                    ),
+                    videoCount: parseInt(channel.statistics?.videoCount || '0'),
+                    thumbnailUrl: channel.snippet?.thumbnails?.high?.url || '',
                 },
             });
 
             const encryptionKey = TokenEncryption.generateKey();
-
             const tokenEncryption = new TokenEncryption(encryptionKey);
-
             const encryptedToken = tokenEncryption.encrypt(
                 token.tokens.access_token!
             );
 
             await prisma.userYoutubeToken.create({
                 data: {
-                    userId: userId,
+                    userId: creator.id!,
                     encryptedToken: encryptedToken.encryptedToken,
                     iv: encryptedToken.iv,
                     authTag: encryptedToken.authTag,
@@ -138,10 +158,10 @@ const youtubeCallback = asyncHandler(
             return res
                 .status(200)
                 .json(
-                    new ApiResponse(200, 'Youtube token stored successfully')
+                    new ApiResponse(200, 'YouTube token stored successfully')
                 );
         } catch (error) {
-            console.log(error);
+            console.error('Error processing YouTube callback:', error);
             return res
                 .status(500)
                 .json(new ApiError(500, 'Internal server error'));

@@ -6,38 +6,36 @@ import { ApiError } from '../utils/api-error';
 import { v4 as uuidv4 } from 'uuid';
 import { sendJoinRequestEmail } from '../emails/send-request';
 
-const generateRequestId = () => {
-    return uuidv4();
-};
+const generateRequestId = () => uuidv4();
 
 const userRole = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
-        const id = req.body.id;
-        const { role } = req.body;
+        const { id, role } = req.body;
+
+        if (!id || !role) {
+            return res
+                .status(400)
+                .json(new ApiError(400, 'User ID and role are required'));
+        }
+
+        if (role !== 'Creator' && role !== 'Editor') {
+            return res.status(400).json(new ApiError(400, 'Invalid role'));
+        }
 
         try {
-            if (role === 'Creator' || role === 'Editor') {
-                if (role === 'Creator') {
-                    await prisma.youtubeCreator.create({
-                        data: {
-                            userId: id,
-                        },
-                    });
-                } else if (role === 'Editor') {
-                    await prisma.youtubeEditor.create({
-                        data: {
-                            userId: id,
-                        },
-                    });
-                }
-
-                return res
-                    .status(200)
-                    .json(new ApiResponse(200, 'Role updated successfully'));
+            if (role === 'Creator') {
+                await prisma.youtubeCreator.create({ data: { userId: id } });
             } else {
-                return res.status(400).json(new ApiError(400, 'Invalid role'));
+                await prisma.youtubeEditor.create({ data: { userId: id } });
             }
+
+            await prisma.user.update({ where: { id }, data: { role } });
+
+            return res
+                .status(200)
+                .json(new ApiResponse(200, 'Role updated successfully'));
         } catch (error) {
+            console.error('Error updating role:', error);
             return res
                 .status(500)
                 .json(new ApiError(500, 'Internal server error'));
@@ -47,50 +45,58 @@ const userRole = asyncHandler(
 
 const addEditor = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
-        const id = req.body.id;
-        const { email } = req.body;
+        const { id, email } = req.body;
+
+        if (!id || !email) {
+            return res
+                .status(400)
+                .json(new ApiError(400, 'User ID and email are required'));
+        }
 
         try {
-            const requestId = generateRequestId();
-            const user = await prisma.user.findUnique({
-                where: {
-                    id,
-                },
-            });
-
+            const user = await prisma.user.findUnique({ where: { id } });
             if (!user) {
                 return res
-                    .status(400)
-                    .json(new ApiError(400, 'User not found'));
+                    .status(404)
+                    .json(new ApiError(404, 'User not found'));
+            }
+
+            const creator = await prisma.youtubeCreator.findFirst({
+                where: { userId: id },
+            });
+            if (!creator) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'User is not a creator'));
             }
 
             const youtubeChannel = await prisma.youtubeChannel.findFirst({
-                where: {
-                    ownerId: id,
-                },
+                where: { ownerId: creator.id },
+            });
+            if (!youtubeChannel) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'YouTube channel not found'));
+            }
+
+            const requestId = generateRequestId();
+            await prisma.joinRequest.create({
+                data: { senderId: creator.id, requestId, status: 'Pending' },
             });
 
-            const joinRequest = await prisma.joinRequest.create({
-                data: {
-                    senderId: user.id,
-                    requestId,
-                    status: 'Pending',
-                },
-            });
-
-            const sendRequestEmail = await sendJoinRequestEmail({
+            await sendJoinRequestEmail({
                 email,
                 requestId,
                 creatorName: user.name!,
-                creatorEmail: user.email,
-                youtubeChannelName: youtubeChannel?.channelTitle!,
+                creatorEmail: user.email!,
+                youtubeChannelName: youtubeChannel.channelTitle!,
             });
 
             return res
                 .status(200)
                 .json(new ApiResponse(200, 'Request sent successfully'));
         } catch (error) {
-            console.log(error);
+            console.error('Error sending join request:', error);
             return res
                 .status(500)
                 .json(new ApiError(500, 'Internal server error'));
