@@ -8,83 +8,86 @@ datasource db {
 }
 
 model User {
-  id                    String         @id @default(uuid())
-  email                 String         @unique
-  name                  String?
-  image                 String?
-  role                  Role           @default(Creator)
-  sessionToken          String?
-  createdAt             DateTime       @default(now())
-  YTCreator             YTCreator[]
-  YTEditor              YTEditor[]
-  sentNotifications     Notification[] @relation("Sender")
-  receivedNotifications Notification[] @relation("Receiver")
-  UserYoutubeToken      UserYoutubeToken[]
+  id             String          @id @default(uuid())
+  name           String?
+  email          String          @unique
+  image          String?
+  sessionToken   String?
+  role           role            @default(NoRole)
+  youtubeCreator youtubeCreator?
+  youtubeEditor  youtubeEditor?
 }
 
-model YTCreator {
-  id           String    @id @default(uuid())
-  ownerId      String
-  owner        User      @relation(fields: [ownerId], references: [id])
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  YTEditor     YTEditor? @relation(fields: [yTEditorId], references: [id])
-  yTEditorId   String?
-  Video        Video[]
+model youtubeEditor {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  youtubeEnvironment youtubeEnvironment[]
+  createdAt DateTime @default(now())
+}
+
+model youtubeEnvironment {
+  id        String         @id @default(uuid())
+  ownerId   String         @unique
+  owner     youtubeCreator @relation(fields: [ownerId], references: [id])
+  editors   youtubeEditor[]
+  createdAt DateTime       @default(now())
+}
+
+model youtubeCreator {
+  id                 String               @id @default(uuid())
+  userId             String               @unique
+  user               User                 @relation(fields: [userId], references: [id])
+  youtubeChannel     youtubeChannel[]
+  sendedRequests     JoinRequest[]        @relation("Sender")
+  UserYoutubeToken   UserYoutubeToken[]
+  youtubeEnvironment youtubeEnvironment[]
+  createdAt          DateTime             @default(now())
+}
+
+model youtubeChannel {
+  id                 String         @id @default(uuid())
+  ownerId            String
+  owner              youtubeCreator @relation(fields: [ownerId], references: [id])
+  channelId          String?
+  channelTitle       String?
+  channelDescription String?
+  subscriberCount    Int?
+  videoCount         Int?
+  thumbnailUrl       String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
 }
 
 model UserYoutubeToken {
-  id             String   @id @default(uuid())
+  id             String         @id @default(uuid())
   userId         String
-  user           User     @relation(fields: [userId], references: [id])
+  user           youtubeCreator @relation(fields: [userId], references: [id])
   encryptedToken String
   iv             String
   authTag        String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now()) @updatedAt
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @default(now()) @updatedAt
 }
 
-model YTEditor {
-  id       String      @id @default(uuid())
-  userId   String
-  user     User        @relation(fields: [userId], references: [id])
-  YTAccess YTCreator[]
-  Video    Video[]
+model JoinRequest {
+  id        String         @id @default(uuid())
+  senderId  String
+  sender    youtubeCreator @relation("Sender", fields: [senderId], references: [id])
+  requestId String
+  status    JoinStatus
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
-model Notification {
-  id         Int      @id @default(autoincrement())
-  senderId   String
-  sender     User     @relation("Sender", fields: [senderId], references: [id])
-  receiverId String
-  receiver   User     @relation("Receiver", fields: [receiverId], references: [id])
-  status     String // Status of the notification
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
-
-model Video {
-  id          Int         @id @default(autoincrement())
-  editorId    String?
-  editor      YTEditor?   @relation(fields: [editorId], references: [id])
-  creatorId   String
-  creator     YTCreator   @relation(fields: [creatorId], references: [id])
-  title       String
-  description String?
-  tags        String[]
-  status      VideoStatus
-  video       String // Video URL or path
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-}
-
-enum Role {
+enum role {
   Creator
   Editor
   NoRole
 }
 
-enum VideoStatus {
-  Draft
-  Published
+enum JoinStatus {
+  Pending
+  Approved
+  Rejected
 }

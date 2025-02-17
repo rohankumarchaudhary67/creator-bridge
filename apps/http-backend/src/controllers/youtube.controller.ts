@@ -6,6 +6,7 @@ import { OAuth2Client } from 'google-auth-library';
 import crypto from 'crypto';
 import { ApiResponse } from '../utils/api-response';
 import prisma from '@repo/db';
+import { google } from 'googleapis';
 
 const youtubeAuth = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
@@ -79,6 +80,43 @@ const youtubeCallback = asyncHandler(
             );
 
             const token = await oauth2Client.getToken(code as string);
+
+            oauth2Client.setCredentials(token.tokens);
+
+            const youtube = google.youtube({
+                version: 'v3',
+                auth: oauth2Client,
+            });
+
+            const response = await youtube.channels.list({
+                part: ['snippet', 'contentDetails', 'statistics'],
+                mine: true,
+            });
+
+            // Extract channel data
+            const channel = response.data.items?.[0];
+
+            if (!channel) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'No YouTube channel found'));
+            }
+
+            await prisma.youtubeChannel.create({
+                data: {
+                    ownerId: userId,
+                    channelId: channel.id!,
+                    channelTitle: channel.snippet?.title!,
+                    channelDescription: channel.snippet?.description!,
+                    subscriberCount: channel.statistics?.subscriberCount!
+                        ? parseInt(channel.statistics.subscriberCount!)
+                        : 0,
+                    videoCount: channel.statistics?.videoCount!
+                        ? parseInt(channel.statistics.videoCount!)
+                        : 0,
+                    thumbnailUrl: channel.snippet?.thumbnails?.high?.url! || '',
+                },
+            });
 
             const encryptionKey = TokenEncryption.generateKey();
 
