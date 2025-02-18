@@ -23,10 +23,12 @@ app.use(cookieParser());
 import { healthCheckRoutes } from './routes/health-check.routes';
 import { userRoutes } from './routes/user.routes';
 import { youtubeRoutes } from './routes/youtube.routes';
+import { videoRoutes } from './routes/videos.routes';
 
 // Routes Decleration
 app.use('/api/v1/health-check', healthCheckRoutes);
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/youtube', youtubeRoutes);
+app.use('/api/v1/video', videoRoutes);
 
 export default app;
