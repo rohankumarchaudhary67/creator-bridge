@@ -140,6 +140,12 @@ const youtubeCallback = asyncHandler(
                 },
             });
 
+            await prisma.youtubeEnvironment.create({
+                data: {
+                    ownerId: creator.id!,
+                },
+            });
+
             const encryptionKey = TokenEncryption.generateKey();
             const tokenEncryption = new TokenEncryption(encryptionKey);
             const encryptedToken = tokenEncryption.encrypt(
