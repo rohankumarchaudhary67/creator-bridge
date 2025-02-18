@@ -1,11 +1,23 @@
 import { Router } from 'express';
-import { userRole } from '../controllers/user.controller';
 import { verifySessionToken } from '../middlewares/auth';
-import { addEditor } from '../controllers/user.controller';
+import {
+    userRole,
+    sendRequestToAddEditor,
+    acceptCreatorRequest,
+} from '../controllers/user.controller';
 
 const userRoutes: Router = Router();
 
 userRoutes.post('/role', verifySessionToken, userRole);
-userRoutes.post('/addEditor', verifySessionToken, addEditor);
+userRoutes.post(
+    '/sendRequestToAddEditor',
+    verifySessionToken,
+    sendRequestToAddEditor
+);
+userRoutes.post(
+    '/acceptCreatorRequest',
+    verifySessionToken,
+    acceptCreatorRequest
+);
 
 export { userRoutes };

@@ -8,76 +8,62 @@ datasource db {
 }
 
 model User {
-  id             String          @id @default(uuid())
-  name           String?
-  email          String          @unique
-  image          String?
-  sessionToken   String?
-  role           role            @default(NoRole)
-  youtubeCreator youtubeCreator?
-  youtubeEditor  youtubeEditor?
+  id                  String                @id @default(uuid())
+  name                String?
+  email               String                @unique
+  image               String?
+  sessionToken        String?
+  role                role                  @default(NoRole)
+  youtubeChannel      YoutubeChannel[]
+  userYoutubeToken    UserYoutubeToken[]
+  youtuberEnvironment YouTuberEnvironment[]
+  editedEnvironments  YouTuberEnvironment[] @relation("Editor")
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  JoinRequest         JoinRequest[]         @relation("Sender")
 }
 
-model youtubeEditor {
+model YouTuberEnvironment {
   id        String   @id @default(uuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  youtubeEnvironment youtubeEnvironment[]
+  ownerId   String   @unique
+  owner     User     @relation(fields: [ownerId], references: [id])
+  editors   User[]   @relation("Editor")
   createdAt DateTime @default(now())
 }
 
-model youtubeEnvironment {
-  id        String         @id @default(uuid())
-  ownerId   String         @unique
-  owner     youtubeCreator @relation(fields: [ownerId], references: [id])
-  editors   youtubeEditor[]
-  createdAt DateTime       @default(now())
-}
-
-model youtubeCreator {
-  id                 String               @id @default(uuid())
-  userId             String               @unique
-  user               User                 @relation(fields: [userId], references: [id])
-  youtubeChannel     youtubeChannel[]
-  sendedRequests     JoinRequest[]        @relation("Sender")
-  UserYoutubeToken   UserYoutubeToken[]
-  youtubeEnvironment youtubeEnvironment[]
-  createdAt          DateTime             @default(now())
-}
-
-model youtubeChannel {
-  id                 String         @id @default(uuid())
+model YoutubeChannel {
+  id                 String   @id @default(uuid())
   ownerId            String
-  owner              youtubeCreator @relation(fields: [ownerId], references: [id])
+  owner              User     @relation(fields: [ownerId], references: [id])
   channelId          String?
   channelTitle       String?
   channelDescription String?
   subscriberCount    Int?
   videoCount         Int?
   thumbnailUrl       String?
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
 }
 
 model UserYoutubeToken {
-  id             String         @id @default(uuid())
+  id             String   @id @default(uuid())
   userId         String
-  user           youtubeCreator @relation(fields: [userId], references: [id])
+  user           User     @relation(fields: [userId], references: [id])
   encryptedToken String
   iv             String
   authTag        String
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @default(now()) @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
 }
 
 model JoinRequest {
-  id        String         @id @default(uuid())
+  id        String     @id @default(uuid())
   senderId  String
-  sender    youtubeCreator @relation("Sender", fields: [senderId], references: [id])
+  sender    User       @relation("Sender", fields: [senderId], references: [id])
   requestId String
   status    JoinStatus
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
 enum role {
