@@ -4,6 +4,7 @@ import {
     userRole,
     sendRequestToAddEditor,
     acceptCreatorRequest,
+    fetchUser,
 } from '../controllers/user.controller';
 
 const userRoutes: Router = Router();
@@ -19,5 +20,6 @@ userRoutes.post(
     verifySessionToken,
     acceptCreatorRequest
 );
+userRoutes.get('/fetchUser', verifySessionToken, fetchUser);
 
 export { userRoutes };

@@ -15,8 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: 'Creator Bridge',
+    title: 'Creator Bridge | Save your time & Internet',
     description: 'Creator Bridge',
+    icons: {
+        icon: '/logo.png',
+    },
 };
 
 export default function RootLayout({

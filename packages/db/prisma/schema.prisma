@@ -20,7 +20,7 @@ model User {
   editedEnvironments  YouTuberEnvironment[] @relation("Editor")
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
-  JoinRequest         JoinRequest[]         @relation("Sender")
+  JoinRequest         Request[]             @relation("Sender")
   videoEditor         YouTubeVideo[]        @relation("VideoEditor")
 }
 
@@ -61,6 +61,7 @@ model UserYoutubeToken {
   id             String   @id @default(uuid())
   userId         String
   user           User     @relation(fields: [userId], references: [id])
+  encryptionKey  String
   encryptedToken String
   iv             String
   authTag        String
@@ -68,7 +69,7 @@ model UserYoutubeToken {
   updatedAt      DateTime @default(now()) @updatedAt
 }
 
-model JoinRequest {
+model Request {
   id        String     @id @default(uuid())
   senderId  String
   sender    User       @relation("Sender", fields: [senderId], references: [id])

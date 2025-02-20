@@ -37,6 +37,39 @@ const userRole = asyncHandler(
     }
 );
 
+const fetchUser = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+        const { id } = req.body;
+
+        if (!id) {
+            return res
+                .status(400)
+                .json(new ApiError(400, 'User ID is required'));
+        }
+
+        try {
+            const user = await prisma.user.findUnique({
+                where: { id },
+                select: { name: true, email: true, role: true, image: true },
+            });
+            if (!user) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'User not found'));
+            }
+
+            return res
+                .status(200)
+                .json(new ApiResponse(200, user, 'User fetched successfully'));
+        } catch (error) {
+            console.error('Error fetching user:', error);
+            return res
+                .status(500)
+                .json(new ApiError(500, 'Internal server error'));
+        }
+    }
+);
+
 const sendRequestToAddEditor = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
         const { id, email } = req.body;
@@ -70,7 +103,7 @@ const sendRequestToAddEditor = asyncHandler(
             }
 
             const requestId = generateRequestId();
-            await prisma.joinRequest.create({
+            await prisma.request.create({
                 data: { senderId: user.id, requestId, status: 'Pending' },
             });
 
@@ -117,7 +150,7 @@ const acceptCreatorRequest = asyncHandler(
                     .json(new ApiError(404, 'User is not a editor'));
             }
 
-            const request = await prisma.joinRequest.findFirst({
+            const request = await prisma.request.findFirst({
                 where: { requestId },
             });
             if (!request) {
@@ -146,7 +179,7 @@ const acceptCreatorRequest = asyncHandler(
                 },
             });
 
-            await prisma.joinRequest.update({
+            await prisma.request.update({
                 where: { id: request.id },
                 data: { status: 'Approved' },
             });
@@ -163,4 +196,4 @@ const acceptCreatorRequest = asyncHandler(
     }
 );
 
-export { userRole, sendRequestToAddEditor, acceptCreatorRequest };
+export { userRole, sendRequestToAddEditor, acceptCreatorRequest, fetchUser };
