@@ -1,11 +1,13 @@
-import CreatorDashboardComponent from './creator';
-import EditorDashboardComponent from './editor';
+import CreatorDashboardComponent from './creator/creator';
+import EditorDashboardComponent from './editor/editor';
 
 export default function DashboardComponent() {
     return (
         <>
-            {/* <CreatorDashboardComponent /> */}
-            <EditorDashboardComponent />
+            <div className="md:px-16 py-6">
+                {/* <CreatorDashboardComponent /> */}
+                <EditorDashboardComponent />
+            </div>
         </>
     );
 }
