@@ -30,7 +30,7 @@ export default function VideoUploadFormDashboardComponent() {
             <h1 className="font-sans font-semibold md:text-xl p-2">
                 Upload Video
             </h1>
-            <div className="bg-muted p-6 rounded-lg shadow-md md:px-96">
+            <div className="bg-muted p-6 rounded-lg shadow-md xl:px-52">
                 {/* File Upload Box */}
                 <div
                     {...getRootProps()}
