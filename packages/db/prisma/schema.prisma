@@ -8,75 +8,113 @@ datasource db {
 }
 
 model User {
-  id                  String                @id @default(uuid())
-  name                String?
-  email               String                @unique
-  image               String?
-  sessionToken        String?
-  role                role                  @default(NoRole)
-  youtubeChannel      YoutubeChannel[]
-  userYoutubeToken    UserYoutubeToken[]
-  youtuberEnvironment YouTuberEnvironment[]
-  editedEnvironments  YouTuberEnvironment[] @relation("Editor")
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
-  JoinRequest         Request[]             @relation("Sender")
-  videoEditor         YouTubeVideo[]        @relation("VideoEditor")
+  id             String          @id @default(uuid())
+  name           String?
+  email          String          @unique
+  image          String?
+  sessionToken   String?
+  role           role            @default(NoRole)
+  youtubeCreator YouTubeCreator?
+  youtubeEditor  YouTubeEditor?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
-model YouTuberEnvironment {
-  id        String   @id @default(uuid())
-  ownerId   String   @unique
-  owner     User     @relation(fields: [ownerId], references: [id])
-  editors   User[]   @relation("Editor")
-  createdAt DateTime @default(now())
+model YouTubeCreator {
+  id               String             @id @default(uuid())
+  ownerId          String             @unique
+  owner            User               @relation(fields: [ownerId], references: [id])
+  youtubeChannel   YoutubeChannel[]
+  userYoutubeToken UserYoutubeToken[]
+  approvedVideos   Int                @default(0)
+  rejectedVideos   Int                @default(0)
+  pendingVideos    Int                @default(0)
+  editors          YouTubeEditor[]    @relation("Editor")
+  videoRequests    VideoRequest[]     @relation("VideoRequest")
+  joinRequest      JoinRequest[]      @relation("Sender")
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
+
+model YouTubeEditor {
+  id                  String           @id @default(uuid())
+  ownerId             String           @unique
+  owner               User             @relation(fields: [ownerId], references: [id])
+  youtuberEnvironment YouTubeCreator[] @relation("Editor")
+  video               YouTubeVideo[]   @relation("VideoEditor")
+  totalVideos         Int              @default(0)
+  approvedVideos      Int              @default(0)
+  rejectedVideos      Int              @default(0)
+  pendingVideos       Int              @default(0)
+  videoRequests       VideoRequest[]   @relation("VideoRequest")
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
 }
 
 model YouTubeVideo {
-  id          String   @id @default(uuid())
-  editorId    String
-  editor      User     @relation(fields: [editorId], references: [id], name: "VideoEditor")
-  videoString String?
-  title       String?
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String         @id @default(uuid())
+  editorId        String
+  editor          YouTubeEditor  @relation(fields: [editorId], references: [id], name: "VideoEditor")
+  videoString     String?
+  title           String?
+  description     String?
+  category        String?
+  visibility      String?
+  status          VideoStatus?
+  creatorResponse String?
+  videorequest    VideoRequest[] @relation("VideoRequest")
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 }
 
 model YoutubeChannel {
-  id                 String   @id @default(uuid())
+  id                 String         @id @default(uuid())
   ownerId            String
-  owner              User     @relation(fields: [ownerId], references: [id])
+  owner              YouTubeCreator @relation(fields: [ownerId], references: [id])
   channelId          String?
   channelTitle       String?
   channelDescription String?
   subscriberCount    Int?
   videoCount         Int?
   thumbnailUrl       String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
 }
 
 model UserYoutubeToken {
-  id             String   @id @default(uuid())
+  id             String         @id @default(uuid())
   userId         String
-  user           User     @relation(fields: [userId], references: [id])
+  user           YouTubeCreator @relation(fields: [userId], references: [id])
   encryptionKey  String
   encryptedToken String
   iv             String
   authTag        String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now()) @updatedAt
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @default(now()) @updatedAt
 }
 
-model Request {
-  id        String     @id @default(uuid())
+model VideoRequest {
+  id         String         @id @default(uuid())
+  senderId   String
+  sender     YouTubeEditor  @relation(fields: [senderId], references: [id], name: "VideoRequest")
+  recieverId String
+  reciever   YouTubeCreator @relation(fields: [recieverId], references: [id], name: "VideoRequest")
+  videoId    String
+  video      YouTubeVideo   @relation(fields: [videoId], references: [id], name: "VideoRequest")
+  requestId  String
+  status     VideoStatus
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+model JoinRequest {
+  id        String         @id @default(uuid())
   senderId  String
-  sender    User       @relation("Sender", fields: [senderId], references: [id])
+  sender    YouTubeCreator @relation("Sender", fields: [senderId], references: [id])
   requestId String
   status    JoinStatus
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }
 
 enum role {
@@ -86,6 +124,12 @@ enum role {
 }
 
 enum JoinStatus {
+  Pending
+  Approved
+  Rejected
+}
+
+enum VideoStatus {
   Pending
   Approved
   Rejected

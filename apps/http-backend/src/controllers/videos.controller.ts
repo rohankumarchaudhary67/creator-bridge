@@ -102,7 +102,7 @@ const sendRequestToCreator = asyncHandler(
                     .json(new ApiError(404, 'Video not found'));
             }
 
-            const youtubeOwner = await prisma.youTuberEnvironment.findFirst({
+            const youtubeOwner = await prisma.youTubeCreator.findFirst({
                 where: {
                     editors: {
                         some: {
@@ -116,7 +116,7 @@ const sendRequestToCreator = asyncHandler(
                 where: { id: youtubeOwner?.ownerId },
             });
 
-            const request = await prisma.request.create({
+            const request = await prisma.joinRequest.create({
                 data: {
                     senderId: user.id,
                     requestId: generateRequestId(),

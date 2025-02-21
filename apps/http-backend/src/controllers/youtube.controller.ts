@@ -133,15 +133,18 @@ const youtubeCallback = asyncHandler(
                     .json(new ApiError(404, 'User not found'));
             }
 
-            if (user.role !== 'Creator') {
+            const creator = await prisma.youTubeCreator.findFirst({
+                where: { ownerId: user.id },
+            });
+            if (!creator) {
                 return res
                     .status(404)
-                    .json(new ApiError(404, 'User is not a creator'));
+                    .json(new ApiError(404, 'Creator not found'));
             }
 
             await prisma.youtubeChannel.create({
                 data: {
-                    ownerId: user.id!,
+                    ownerId: creator.id!,
                     channelId: channel.id!,
                     channelTitle: channel.snippet?.title!,
                     channelDescription: channel.snippet?.description || '',
@@ -153,12 +156,6 @@ const youtubeCallback = asyncHandler(
                 },
             });
 
-            await prisma.youTuberEnvironment.create({
-                data: {
-                    ownerId: user.id!,
-                },
-            });
-
             const encryptionKey = TokenEncryption.generateKey();
             const tokenEncryption = new TokenEncryption(encryptionKey);
             const encryptedToken = tokenEncryption.encrypt(
@@ -167,7 +164,7 @@ const youtubeCallback = asyncHandler(
 
             await prisma.userYoutubeToken.create({
                 data: {
-                    userId: user.id!,
+                    userId: creator.id!,
                     encryptionKey,
                     encryptedToken: encryptedToken.encryptedToken,
                     iv: encryptedToken.iv,
