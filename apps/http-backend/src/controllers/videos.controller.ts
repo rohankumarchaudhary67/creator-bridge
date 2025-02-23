@@ -7,7 +7,6 @@ import { ApiResponse } from '../utils/api-response';
 import { v4 as uuidv4 } from 'uuid';
 import { sendVideoUploadRequestEmail } from '../emails/send-request';
 
-// Define the shape of req.files
 interface MulterFiles {
     video?: Express.Multer.File[];
 }

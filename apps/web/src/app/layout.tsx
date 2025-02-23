@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import '@/styles/globals.css';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { Session_Provider } from '@/providers/session-provider';
+import { RecoilProviders } from '@/store/recoil-provider';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -38,7 +39,9 @@ export default function RootLayout({
                     enableSystem
                     disableTransitionOnChange
                 >
-                    <Session_Provider>{children}</Session_Provider>
+                    <Session_Provider>
+                        <RecoilProviders>{children}</RecoilProviders>
+                    </Session_Provider>
                 </ThemeProvider>
             </body>
         </html>
