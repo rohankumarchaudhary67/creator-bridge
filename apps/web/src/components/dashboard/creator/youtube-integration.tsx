@@ -2,8 +2,27 @@ import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { SiTicktick } from 'react-icons/si';
+import axios from 'axios';
+import { redirect } from 'next/navigation';
 
-export default function YoutubeIntegrationDashboardComponent() {
+export default function YoutubeIntegrationDashboardComponent({
+    accessToken,
+}: {
+    accessToken: string;
+}) {
+    const youtubeIntegrationHandler = async () => {
+        const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/youtube/auth`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            }
+        );
+        console.log(response.data.data);
+        redirect(response.data.data.authUrl!);
+    };
+
     return (
         <>
             <div className="py-4">
@@ -36,7 +55,12 @@ export default function YoutubeIntegrationDashboardComponent() {
                                     management
                                 </p>
                             </div>
-                            <Button className="bg-red-600 hover:bg-red-500 font-sans text-lg text-white">
+                            <Button
+                                className="bg-red-600 hover:bg-red-500 font-sans text-lg text-white"
+                                onClick={() => {
+                                    youtubeIntegrationHandler();
+                                }}
+                            >
                                 Connect with YouTube
                             </Button>
                         </div>

@@ -43,7 +43,6 @@ const fetchCreator = asyncHandler(
             }
 
             const response = {
-                totalVideos: youtubeChannel?.videoCount,
                 approvedVideos: creator.approvedVideos,
                 rejectedVideos: creator.rejectedVideos,
                 pendingVideos: creator.pendingVideos,

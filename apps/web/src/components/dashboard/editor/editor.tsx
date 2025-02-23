@@ -27,7 +27,11 @@ interface VideoData {
     };
 }
 
-export default function EditorDashboardComponent() {
+export default function EditorDashboardComponent({
+    accessToken,
+}: {
+    accessToken: string;
+}) {
     const data = [
         {
             video: 'Video',

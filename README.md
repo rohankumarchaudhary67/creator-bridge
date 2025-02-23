@@ -14,10 +14,10 @@
 - **Streamlined Workflow**: The platform streamlines the video production process, making it more efficient and effective.
 
 ## Screenshots
+
 ![Screenshot 2025-02-18 at 7 15 44 PM](https://github.com/user-attachments/assets/71eff1f4-c024-4c95-9d59-7ec687b4ff58)
 ![Screenshot 2025-02-18 at 7 16 18 PM](https://github.com/user-attachments/assets/09e3557d-e645-4fdb-a4ce-10fdbfea85f9)
 ![Screenshot 2025-02-18 at 7 16 11 PM](https://github.com/user-attachments/assets/21ff0f94-5dc7-41a3-829a-057a294f3ac4)
-
 
 ## Tech Stack
 

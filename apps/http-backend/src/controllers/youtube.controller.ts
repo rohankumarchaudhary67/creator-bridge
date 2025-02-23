@@ -172,11 +172,7 @@ const youtubeCallback = asyncHandler(
                 },
             });
 
-            return res
-                .status(200)
-                .json(
-                    new ApiResponse(200, 'YouTube token stored successfully')
-                );
+            return res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
         } catch (error) {
             console.error('Error processing YouTube callback:', error);
             return res

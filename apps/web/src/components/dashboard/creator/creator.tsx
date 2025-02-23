@@ -1,3 +1,4 @@
+'use client';
 import HeaderDashboardComponent from '../header';
 import CountBoxDashboardComponent from '../count-box';
 import { MdOutlineCheckCircleOutline, MdSlowMotionVideo } from 'react-icons/md';
@@ -10,8 +11,50 @@ import { IoSettingsSharp } from 'react-icons/io5';
 import NotificationComponent from '../notification';
 import { LuClock4 } from 'react-icons/lu';
 import YoutubeIntegrationDashboardComponent from './youtube-integration';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import YouTubeChannelDetailsComponent from './youtube-channel';
 
-export default function CreatorDashboardComponent() {
+interface CreatorData {
+    totalVideos: number;
+    pendingVideos: number;
+    approvedVideos: number;
+    rejectedVideos: number;
+    connectionStatus: boolean;
+    youtubeChannel: {
+        channelId: string;
+        channelTitle: string;
+        channelDescription: string;
+        subscriberCount: number;
+        videoCount: number;
+        thumbnailUrl: string;
+    };
+    editors: [];
+}
+
+export default function CreatorDashboardComponent({
+    accessToken,
+}: {
+    accessToken: string;
+}) {
+    const [creatorData, setCreatorData] = useState<CreatorData | null>(null);
+
+    const fetchCreatorData = async () => {
+        const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/creator/fetch`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            }
+        );
+        setCreatorData(response.data.data);
+    };
+
+    useEffect(() => {
+        fetchCreatorData();
+    }, []);
+
     const data = [
         {
             id: '123456789',
@@ -82,24 +125,24 @@ export default function CreatorDashboardComponent() {
 
                 <div className="flex justify-between items-center space-x-4 pt-2">
                     <CountBoxDashboardComponent
-                        heading="Total Videos"
-                        count={10}
+                        heading="Approved Videos"
+                        count={creatorData?.approvedVideos!}
                     >
-                        <div className="p-2 rounded-full bg-blue-100">
-                            <MdSlowMotionVideo className="text-primary md:text-2xl text-blue-800 font-bold" />
+                        <div className="p-2 rounded-full bg-green-100">
+                            <MdOutlineCheckCircleOutline className="text-primary md:text-2xl text-green-700 font-bold" />
                         </div>
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Pending Requests"
-                        count={10}
+                        count={creatorData?.pendingVideos!}
                     >
                         <div className="p-2 rounded-full bg-yellow-100">
                             <LuClock4 className="text-primary md:text-2xl text-yellow-600 font-bold" />
                         </div>
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
-                        heading="Approved Videos"
-                        count={10}
+                        heading="Rejected Videos"
+                        count={creatorData?.rejectedVideos!}
                     >
                         <div className="p-2 rounded-full bg-green-100">
                             <MdOutlineCheckCircleOutline className="text-primary md:text-2xl text-green-700 font-bold" />
@@ -107,7 +150,7 @@ export default function CreatorDashboardComponent() {
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Total Editors"
-                        count={10}
+                        count={creatorData?.editors.length!}
                     >
                         <div className="p-2 rounded-full bg-blue-100">
                             <FaHouseUser className="text-primary md:text-2xl text-blue-800 font-bold" />
@@ -115,7 +158,15 @@ export default function CreatorDashboardComponent() {
                     </CountBoxDashboardComponent>
                 </div>
 
-                <YoutubeIntegrationDashboardComponent />
+                {!creatorData?.connectionStatus ? (
+                    <YoutubeIntegrationDashboardComponent
+                        accessToken={accessToken}
+                    />
+                ) : (
+                    <YouTubeChannelDetailsComponent
+                        channelData={creatorData?.youtubeChannel}
+                    />
+                )}
 
                 <ApprovalVideoDataComponent data={data} />
             </div>

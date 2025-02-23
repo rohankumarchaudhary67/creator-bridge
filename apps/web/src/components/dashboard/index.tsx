@@ -2,35 +2,33 @@
 import { useEffect } from 'react';
 import CreatorDashboardComponent from './creator/creator';
 import EditorDashboardComponent from './editor/editor';
-import axios from 'axios';
-import { useRecoilState } from 'recoil';
-import { userAtom } from '@/store/atoms/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserData } from '@/redux/slices/user-slice';
+import { AppDispatch, RootState } from '@/redux/store';
 
 export default function DashboardComponent({
     accessToken,
 }: {
     accessToken: string;
 }) {
-    const [user, setUser] = useRecoilState(userAtom);
-
-    const fetchUserData = async () => {
-        const user = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/fetch`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }
-        );
-    };
+    const dispatch = useDispatch<AppDispatch>();
+    const data = useSelector((state: RootState) => state.user);
 
     useEffect(() => {
-        fetchUserData();
-    }, [accessToken]);
+        dispatch(fetchUserData(accessToken));
+    }, [dispatch]);
 
     return (
         <>
-            <div className="2xl:px-72 md:px-36 px-6 py-6"></div>
+            <div className="2xl:px-72 md:px-36 px-6 py-6">
+                {data.data?.role === 'NoRole' && <div>Loading....</div>}
+                {data.data?.role === 'Creator' && (
+                    <CreatorDashboardComponent accessToken={accessToken} />
+                )}
+                {data.data?.role === 'Editor' && (
+                    <EditorDashboardComponent accessToken={accessToken} />
+                )}
+            </div>
         </>
     );
 }
