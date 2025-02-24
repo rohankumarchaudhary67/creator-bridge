@@ -17,13 +17,10 @@ const fetchCreator = asyncHandler(
                 where: { ownerId: id },
                 select: {
                     id: true,
-                    ownerId: true,
                     approvedVideos: true,
                     rejectedVideos: true,
                     pendingVideos: true,
                     editors: true,
-                    videoRequests: true,
-                    joinRequest: true,
                 },
             });
             if (!creator) {
@@ -46,11 +43,8 @@ const fetchCreator = asyncHandler(
                 approvedVideos: creator.approvedVideos,
                 rejectedVideos: creator.rejectedVideos,
                 pendingVideos: creator.pendingVideos,
-                editors: creator.editors,
-                videoRequests: creator.videoRequests,
-                joinRequest: creator.joinRequest,
+                editors: creator.editors.length,
                 connectionStatus,
-                youtubeChannel,
             };
 
             return res

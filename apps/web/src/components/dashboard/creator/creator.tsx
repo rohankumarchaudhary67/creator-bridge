@@ -16,20 +16,11 @@ import { useEffect, useState } from 'react';
 import YouTubeChannelDetailsComponent from './youtube-channel';
 
 interface CreatorData {
-    totalVideos: number;
     pendingVideos: number;
     approvedVideos: number;
     rejectedVideos: number;
+    editors: number;
     connectionStatus: boolean;
-    youtubeChannel: {
-        channelId: string;
-        channelTitle: string;
-        channelDescription: string;
-        subscriberCount: number;
-        videoCount: number;
-        thumbnailUrl: string;
-    };
-    editors: [];
 }
 
 export default function CreatorDashboardComponent({
@@ -123,7 +114,7 @@ export default function CreatorDashboardComponent({
                     </div>
                 </HeaderDashboardComponent>
 
-                <div className="flex justify-between items-center space-x-4 pt-2">
+                <div className="flex justify-between items-center space-x-4">
                     <CountBoxDashboardComponent
                         heading="Approved Videos"
                         count={creatorData?.approvedVideos!}
@@ -150,7 +141,7 @@ export default function CreatorDashboardComponent({
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Total Editors"
-                        count={creatorData?.editors.length!}
+                        count={creatorData?.editors!}
                     >
                         <div className="p-2 rounded-full bg-blue-100">
                             <FaHouseUser className="text-primary md:text-2xl text-blue-800 font-bold" />
@@ -163,9 +154,7 @@ export default function CreatorDashboardComponent({
                         accessToken={accessToken}
                     />
                 ) : (
-                    <YouTubeChannelDetailsComponent
-                        channelData={creatorData?.youtubeChannel}
-                    />
+                    <YouTubeChannelDetailsComponent accessToken={accessToken} />
                 )}
 
                 <ApprovalVideoDataComponent data={data} />

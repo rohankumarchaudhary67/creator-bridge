@@ -3,6 +3,7 @@ import {
     youtubeAuth,
     youtubeCallback,
     uploadVideoToYoutube,
+    getYoutubeChannelDetails,
 } from '../controllers/youtube.controller';
 import { verifySessionToken } from '../middlewares/auth';
 
@@ -14,6 +15,11 @@ youtubeRoutes.post(
     '/upload-to-youtube',
     verifySessionToken,
     uploadVideoToYoutube
+);
+youtubeRoutes.get(
+    '/fetch-channel-details',
+    verifySessionToken,
+    getYoutubeChannelDetails
 );
 
 export { youtubeRoutes };

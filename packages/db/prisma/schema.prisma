@@ -71,7 +71,7 @@ model YoutubeChannel {
   id                 String         @id @default(uuid())
   ownerId            String
   owner              YouTubeCreator @relation(fields: [ownerId], references: [id])
-  channelId          String?
+  channelId          String?        @unique
   channelTitle       String?
   channelDescription String?
   subscriberCount    Int?

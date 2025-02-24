@@ -162,6 +162,10 @@ const youtubeCallback = asyncHandler(
                 token.tokens.access_token!
             );
 
+            await prisma.userYoutubeToken.deleteMany({
+                where: { userId: creator.id },
+            });
+
             await prisma.userYoutubeToken.create({
                 data: {
                     userId: creator.id!,
@@ -196,11 +200,10 @@ const uploadVideoToYoutube = asyncHandler(
             const youtubeVideo = await prisma.youTubeVideo.findFirst({
                 where: { id: videoId },
             });
-            console.log(youtubeVideo);
+
             const youtubeChannel = await prisma.youtubeChannel.findFirst({
                 where: { ownerId: id },
             });
-            console.log(youtubeChannel);
             if (!youtubeChannel) {
                 return res
                     .status(400)
@@ -210,7 +213,6 @@ const uploadVideoToYoutube = asyncHandler(
             const youtubeToken = await prisma.userYoutubeToken.findFirst({
                 where: { userId: id },
             });
-            console.log(youtubeToken);
             if (!youtubeToken) {
                 return res
                     .status(400)
@@ -225,7 +227,6 @@ const uploadVideoToYoutube = asyncHandler(
                 iv: youtubeToken.iv,
                 authTag: youtubeToken.authTag,
             });
-            console.log(decryptedYouTubeToken);
 
             const oauth2Client = new OAuth2Client(
                 process.env.YOUTUBE_CLIENT_ID!,
@@ -248,13 +249,9 @@ const uploadVideoToYoutube = asyncHandler(
                     method: 'GET',
                     responseType: 'stream',
                 });
-                console.log(response);
                 const tempFilePath = path.join(__dirname, 'temp.mp4');
-                console.log(tempFilePath);
                 const tempFile = fs.createWriteStream(tempFilePath);
-                console.log(tempFile);
                 await streamPipeline(response.data, tempFile);
-                console.log('done');
 
                 const uploadResponse = await youtube.videos.insert({
                     part: ['snippet', 'status'],
@@ -273,7 +270,6 @@ const uploadVideoToYoutube = asyncHandler(
                         body: fs.createReadStream(tempFilePath),
                     },
                 });
-                console.log(uploadResponse);
 
                 fs.unlinkSync(tempFilePath);
 
@@ -299,4 +295,104 @@ const uploadVideoToYoutube = asyncHandler(
     }
 );
 
-export { youtubeAuth, youtubeCallback, uploadVideoToYoutube };
+const getYoutubeChannelDetails = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+        const id = req.body.id;
+
+        try {
+            const youtubeCreator = await prisma.youTubeCreator.findFirst({
+                where: { ownerId: id },
+            });
+            if (!youtubeCreator) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Creator not found'));
+            }
+
+            const youtubeToken = await prisma.userYoutubeToken.findFirst({
+                where: { userId: youtubeCreator.id },
+            });
+            if (!youtubeToken) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'YouTube token not found'));
+            }
+
+            const tokenEncryption = new TokenEncryption(
+                youtubeToken.encryptionKey
+            );
+            const decryptedYouTubeToken = tokenEncryption.decrypt({
+                encryptedToken: youtubeToken.encryptedToken,
+                iv: youtubeToken.iv,
+                authTag: youtubeToken.authTag,
+            });
+
+            const oauth2Client = new OAuth2Client(
+                process.env.YOUTUBE_CLIENT_ID!,
+                process.env.YOUTUBE_CLIENT_SECRET!,
+                process.env.YOUTUBE_REDIRECT_URI!
+            );
+
+            oauth2Client.setCredentials({
+                access_token: decryptedYouTubeToken,
+            });
+
+            const youtube = google.youtube({
+                version: 'v3',
+                auth: oauth2Client,
+            });
+
+            const response = await youtube.channels.list({
+                part: ['snippet', 'contentDetails', 'statistics'],
+                mine: true,
+            });
+
+            const channel = response.data.items?.[0];
+            if (!channel) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'No YouTube channel found'));
+            }
+
+            const youtubeChannel = await prisma.youtubeChannel.findFirst({
+                where: { ownerId: youtubeCreator.id },
+            });
+
+            const updatedChannel = await prisma.youtubeChannel.update({
+                where: { id: youtubeChannel?.id },
+                data: {
+                    channelId: channel.id,
+                    channelTitle: channel.snippet?.title,
+                    channelDescription: channel.snippet?.description,
+                    subscriberCount: parseInt(
+                        channel.statistics?.subscriberCount || '0'
+                    ),
+                    videoCount: parseInt(channel.statistics?.videoCount || '0'),
+                    thumbnailUrl: channel.snippet?.thumbnails?.high?.url,
+                },
+            });
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        updatedChannel,
+                        'YouTube channel details fetched and stored successfully'
+                    )
+                );
+        } catch (error) {
+            console.error('Error fetching YouTube channel details:', error);
+            return res
+                .status(500)
+                .json(new ApiError(500, 'Internal server error'));
+        }
+    }
+);
+
+export {
+    youtubeAuth,
+    youtubeCallback,
+    uploadVideoToYoutube,
+    getYoutubeChannelDetails,
+};
