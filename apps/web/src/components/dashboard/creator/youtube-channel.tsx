@@ -67,7 +67,7 @@ export default function YouTubeChannelDetailsComponent({
                             <h1 className="font-sans font-semibold">
                                 Connection Status
                             </h1>
-                            <Badge className="rounded-full px-2 text-green-600 bg-green-100">
+                            <Badge className="rounded-full px-2 text-[#29a329] bg-[#adebad]">
                                 Connected
                             </Badge>
                         </div>

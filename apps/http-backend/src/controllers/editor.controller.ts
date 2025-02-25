@@ -12,12 +12,10 @@ const fetchEditor = asyncHandler(
             const editor = await prisma.youTubeEditor.findFirst({
                 where: { ownerId: id },
                 select: {
-                    video: true,
                     totalVideos: true,
                     approvedVideos: true,
                     rejectedVideos: true,
                     pendingVideos: true,
-                    videoRequests: true,
                 },
             });
             if (!editor) {

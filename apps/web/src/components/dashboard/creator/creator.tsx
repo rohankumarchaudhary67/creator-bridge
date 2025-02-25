@@ -119,32 +119,32 @@ export default function CreatorDashboardComponent({
                         heading="Approved Videos"
                         count={creatorData?.approvedVideos!}
                     >
-                        <div className="p-2 rounded-full bg-green-100">
-                            <MdOutlineCheckCircleOutline className="text-primary md:text-2xl text-green-700 font-bold" />
+                        <div className="p-2 rounded-full bg-[#adebad]">
+                            <MdOutlineCheckCircleOutline className="text-primary md:text-2xl text-[#29a329] font-bold" />
                         </div>
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Pending Requests"
                         count={creatorData?.pendingVideos!}
                     >
-                        <div className="p-2 rounded-full bg-yellow-100">
-                            <LuClock4 className="text-primary md:text-2xl text-yellow-600 font-bold" />
+                        <div className="p-2 rounded-full bg-[#ffff80]">
+                            <LuClock4 className="text-primary md:text-2xl text-[#b3b300] font-bold" />
                         </div>
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Rejected Videos"
                         count={creatorData?.rejectedVideos!}
                     >
-                        <div className="p-2 rounded-full bg-green-100">
-                            <MdOutlineCheckCircleOutline className="text-primary md:text-2xl text-green-700 font-bold" />
+                        <div className="p-2 rounded-full bg-[#ffad99]">
+                            <MdOutlineCheckCircleOutline className="text-primary md:text-2xl text-[#e62e00] font-bold" />
                         </div>
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Total Editors"
                         count={creatorData?.editors!}
                     >
-                        <div className="p-2 rounded-full bg-blue-100">
-                            <FaHouseUser className="text-primary md:text-2xl text-blue-800 font-bold" />
+                        <div className="p-2 rounded-full bg-[#99b3ff]">
+                            <FaHouseUser className="text-primary md:text-2xl text-[#0039e6] font-bold" />
                         </div>
                     </CountBoxDashboardComponent>
                 </div>
