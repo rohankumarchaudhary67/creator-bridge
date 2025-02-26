@@ -31,8 +31,11 @@ export function UserNav({
 }>) {
     const data = useSelector((state: RootState) => state.user);
 
-    const handleLogout = () => {
-        signOut();
+    const handleLogout = async () => {
+        await signOut({
+            redirect: true,
+            callbackUrl: '/',
+        });
     };
 
     return (

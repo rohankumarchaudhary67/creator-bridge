@@ -1,3 +1,5 @@
+import Header from '@/components/landing-page/header';
+import Navbar from '@/components/landing-page/navbar';
 import { authOptions } from '@/lib/auth';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
@@ -9,5 +11,13 @@ export default async function Home() {
         console.log(session);
         redirect('/dashboard');
     }
-    return <></>;
+
+    return (
+        <>
+            <div className="md:px-32">
+                <Navbar />
+                <Header />
+            </div>
+        </>
+    );
 }

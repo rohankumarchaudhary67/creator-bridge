@@ -1,3 +1,4 @@
+'use client';
 import HeaderDashboardComponent from '../header';
 import { MdSlowMotionVideo, MdOutlineCheckCircleOutline } from 'react-icons/md';
 import { LuClock4 } from 'react-icons/lu';
@@ -12,50 +13,20 @@ import { DropdownMenuItem } from '../../ui/dropdown-menu';
 import { FaVideo, FaDollarSign, FaUser } from 'react-icons/fa';
 import { FaBuildingUser } from 'react-icons/fa6';
 import { IoSettingsSharp } from 'react-icons/io5';
-
-interface VideoData {
-    title: string;
-    duration: string;
-    date: string;
-    status: 'Pending' | 'Approved' | 'Rejected';
-    message: string;
-    actions?: {
-        edit?: boolean;
-        cancel?: boolean;
-        viewDetails?: boolean;
-        resubmit?: boolean;
-    };
-}
+import { useEffect, useState } from 'react';
 
 export default function EditorDashboardComponent({
     accessToken,
 }: {
     accessToken: string;
 }) {
-    const data = [
-        {
-            video: 'Video',
-            status: 'status',
-            actions: 'actions',
-            date: 'date',
-        },
-    ];
+    const [editorData, setEditorData] = useState();
 
-    const videoData: VideoData[] = [
-        {
-            title: 'Marketing Video',
-            duration: '3:45',
-            date: '2024-02-20',
-            status: 'Pending',
-            message: 'Awaiting review',
-            actions: {
-                edit: true,
-                cancel: true,
-                viewDetails: false,
-                resubmit: false,
-            },
-        },
-    ];
+    const fetchEditorData = async () => {};
+
+    useEffect(() => {
+        fetchEditorData();
+    }, []);
 
     return (
         <>
@@ -117,9 +88,9 @@ export default function EditorDashboardComponent({
                     </CountBoxDashboardComponent>
                 </div>
 
-                <EditorRecentVideosDashboardComponent data={data} />
+                {/* <EditorRecentVideosDashboardComponent data={data} /> */}
                 <VideoUploadFormDashboardComponent />
-                <EditorRequestVideosDashboardComponent data={videoData} />
+                {/* <EditorRequestVideosDashboardComponent data={videoData} /> */}
             </div>
         </>
     );
