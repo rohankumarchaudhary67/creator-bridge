@@ -14,15 +14,33 @@ import { FaVideo, FaDollarSign, FaUser } from 'react-icons/fa';
 import { FaBuildingUser } from 'react-icons/fa6';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+interface EditorData {
+    pendingVideos: number;
+    approvedVideos: number;
+    rejectedVideos: number;
+    totalVideos: number;
+}
 
 export default function EditorDashboardComponent({
     accessToken,
 }: {
     accessToken: string;
 }) {
-    const [editorData, setEditorData] = useState();
+    const [editorData, setEditorData] = useState<EditorData | null>(null);
 
-    const fetchEditorData = async () => {};
+    const fetchEditorData = async () => {
+        const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/editor/fetch`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            }
+        );
+        setEditorData(response.data.data);
+    };
 
     useEffect(() => {
         fetchEditorData();
@@ -64,26 +82,26 @@ export default function EditorDashboardComponent({
                 <div className="flex justify-between items-center space-x-4 pt-2">
                     <CountBoxDashboardComponent
                         heading="Total Videos"
-                        count={10}
+                        count={editorData?.totalVideos!}
                     >
-                        <div className="p-2 rounded-full bg-blue-100">
-                            <MdSlowMotionVideo className="text-primary md:text-2xl text-blue-700 font-bold" />
+                        <div className="p-2 rounded-full bg-[#99b3ff]">
+                            <MdSlowMotionVideo className="md:text-2xl text-[#0039e6] font-bold" />
                         </div>
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Approved Videos"
-                        count={2}
+                        count={editorData?.approvedVideos!}
                     >
-                        <div className="p-2 rounded-full bg-green-100">
-                            <MdOutlineCheckCircleOutline className="text-primary md:text-2xl text-green-600 font-bold" />
+                        <div className="p-2 rounded-full bg-[#adebad]">
+                            <MdOutlineCheckCircleOutline className="md:text-2xl text-[#29a329] font-bold" />
                         </div>
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Pending Approvals"
-                        count={8}
+                        count={editorData?.pendingVideos!}
                     >
-                        <div className="p-2 rounded-full bg-yellow-100">
-                            <LuClock4 className="text-primary md:text-2xl text-yellow-600 font-bold" />
+                        <div className="p-2 rounded-full bg-[#ffff80]">
+                            <LuClock4 className="md:text-2xl text-[#b3b300] font-bold" />
                         </div>
                     </CountBoxDashboardComponent>
                 </div>
