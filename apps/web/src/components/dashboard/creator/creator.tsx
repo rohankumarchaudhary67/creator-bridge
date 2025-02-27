@@ -50,19 +50,7 @@ export default function CreatorDashboardComponent({
         {
             id: '123456789',
             thumbnail: '/test-thumbnail.jpeg',
-            title: 'The Great wall of china',
-            category: 'Technology',
-            duration: '2:30 mins',
-            uploadedBy: {
-                name: 'Rohan Chaudhary',
-                email: 'rohan@creator.xyz',
-            },
-            timeAgo: '2025-02-20',
-        },
-        {
-            id: '12345789',
-            thumbnail: '/test-thumbnail.jpeg',
-            title: 'The Great wall of china',
+            title: 'The Great Wall of China',
             category: 'Technology',
             duration: '2:30 mins',
             uploadedBy: {
@@ -149,15 +137,20 @@ export default function CreatorDashboardComponent({
                     </CountBoxDashboardComponent>
                 </div>
 
-                {!creatorData?.connectionStatus ? (
+                {!creatorData?.connectionStatus && (
                     <YoutubeIntegrationDashboardComponent
                         accessToken={accessToken}
                     />
-                ) : (
-                    <YouTubeChannelDetailsComponent accessToken={accessToken} />
                 )}
 
-                <ApprovalVideoDataComponent data={data} />
+                {creatorData?.connectionStatus && (
+                    <>
+                        <ApprovalVideoDataComponent data={data} />
+                        <YouTubeChannelDetailsComponent
+                            accessToken={accessToken}
+                        />
+                    </>
+                )}
             </div>
         </>
     );

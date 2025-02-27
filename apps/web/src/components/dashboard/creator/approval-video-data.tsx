@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
+import { TiTick } from 'react-icons/ti';
+import { ImCross } from 'react-icons/im';
 
 interface VideoData {
     id: string;
@@ -114,14 +116,16 @@ export default function ApprovalVideoDataComponent({ data }: DataProps) {
                                 </TableCell>
 
                                 {/* Actions */}
-                                <TableCell className="text-right space-x-2">
-                                    <Button className="bg-green-500 hover:bg-green-600 text-white">
-                                        Approve
-                                    </Button>
-                                    <Button className="bg-red-500 hover:bg-red-600 text-white">
+                                <TableCell className="flex justify-around items-center pt-8 space-x-2">
+                                    <h1 className="cursor-pointer text-yellow-600">
+                                        Preview
+                                    </h1>
+                                    <h1 className="text-red-500 cursor-pointer">
                                         Reject
-                                    </Button>
-                                    <Button variant="outline">Preview</Button>
+                                    </h1>
+                                    <h1 className="text-[#29a329] cursor-pointer">
+                                        Approve
+                                    </h1>
                                 </TableCell>
                             </TableRow>
                         ))}
