@@ -1,11 +1,17 @@
-export default function RoleComponent() {
+import RoleComponent from '@/components/authentication/role';
+import { authOptions } from '@/lib/auth';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+
+export default async function Role() {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        redirect('/authentication');
+    }
+
     return (
         <>
-            <div className="flex justify-center items-center h-screen bg-background">
-                <span className="text-4xl pb-36 font-bold font-sans">
-                    Role Page Coming Soon...
-                </span>
-            </div>
+            <RoleComponent accessToken={session?.accessToken as string} />
         </>
     );
 }

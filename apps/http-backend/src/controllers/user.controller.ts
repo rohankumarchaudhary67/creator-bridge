@@ -32,6 +32,7 @@ const userRole = asyncHandler(
                     },
                 });
             }
+
             await prisma.user.update({ where: { id }, data: { role } });
 
             return res

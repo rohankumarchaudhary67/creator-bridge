@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 export default async function Authentication() {
     const session = await getServerSession();
     if (session) {
-        redirect('/dashboard');
+        redirect('/authentication/role');
     }
     return (
         <>
