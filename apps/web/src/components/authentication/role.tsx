@@ -57,7 +57,7 @@ export default function RoleComponent({
 
     useEffect(() => {
         fetchUserData();
-    }, []);
+    }, [accessToken]);
 
     return (
         <>

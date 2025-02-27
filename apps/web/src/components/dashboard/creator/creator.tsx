@@ -1,7 +1,7 @@
 'use client';
 import HeaderDashboardComponent from '../header';
 import CountBoxDashboardComponent from '../count-box';
-import { MdOutlineCheckCircleOutline, MdSlowMotionVideo } from 'react-icons/md';
+import { MdOutlineCheckCircleOutline } from 'react-icons/md';
 import ApprovalVideoDataComponent from './approval-video-data';
 import { UserNav } from '../user-nav';
 import Link from 'next/link';
@@ -44,7 +44,7 @@ export default function CreatorDashboardComponent({
 
     useEffect(() => {
         fetchCreatorData();
-    }, []);
+    }, [accessToken]);
 
     const data = [
         {
@@ -117,7 +117,7 @@ export default function CreatorDashboardComponent({
                 <div className="flex justify-between items-center space-x-4">
                     <CountBoxDashboardComponent
                         heading="Approved Videos"
-                        count={creatorData?.approvedVideos!}
+                        count={creatorData?.approvedVideos ?? 0}
                     >
                         <div className="p-2 rounded-full bg-[#adebad]">
                             <MdOutlineCheckCircleOutline className="md:text-2xl text-[#29a329] font-bold" />
@@ -125,7 +125,7 @@ export default function CreatorDashboardComponent({
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Pending Requests"
-                        count={creatorData?.pendingVideos!}
+                        count={creatorData?.pendingVideos ?? 0}
                     >
                         <div className="p-2 rounded-full bg-[#ffff80]">
                             <LuClock4 className="md:text-2xl text-[#b3b300] font-bold" />
@@ -133,7 +133,7 @@ export default function CreatorDashboardComponent({
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Rejected Videos"
-                        count={creatorData?.rejectedVideos!}
+                        count={creatorData?.rejectedVideos ?? 0}
                     >
                         <div className="p-2 rounded-full bg-[#ffad99]">
                             <MdOutlineCheckCircleOutline className="md:text-2xl text-[#e62e00] font-bold" />
@@ -141,7 +141,7 @@ export default function CreatorDashboardComponent({
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Total Editors"
-                        count={creatorData?.editors!}
+                        count={creatorData?.editors ?? 0}
                     >
                         <div className="p-2 rounded-full bg-[#99b3ff]">
                             <FaHouseUser className="md:text-2xl text-[#0039e6] font-bold" />

@@ -3,11 +3,9 @@ import HeaderDashboardComponent from '../header';
 import { MdSlowMotionVideo, MdOutlineCheckCircleOutline } from 'react-icons/md';
 import { LuClock4 } from 'react-icons/lu';
 import CountBoxDashboardComponent from '../count-box';
-import EditorRecentVideosDashboardComponent from './recent-videos';
 import VideoUploadFormDashboardComponent from './video-upload-form';
 import { UserNav } from '../user-nav';
 import NotificationComponent from '../notification';
-import EditorRequestVideosDashboardComponent from './request-videos';
 import Link from 'next/link';
 import { DropdownMenuItem } from '../../ui/dropdown-menu';
 import { FaVideo, FaDollarSign, FaUser } from 'react-icons/fa';
@@ -44,7 +42,7 @@ export default function EditorDashboardComponent({
 
     useEffect(() => {
         fetchEditorData();
-    }, []);
+    }, [accessToken]);
 
     return (
         <>
@@ -82,7 +80,7 @@ export default function EditorDashboardComponent({
                 <div className="flex justify-between items-center space-x-4 pt-2">
                     <CountBoxDashboardComponent
                         heading="Total Videos"
-                        count={editorData?.totalVideos!}
+                        count={editorData?.totalVideos ?? 0}
                     >
                         <div className="p-2 rounded-full bg-[#99b3ff]">
                             <MdSlowMotionVideo className="md:text-2xl text-[#0039e6] font-bold" />
@@ -90,7 +88,7 @@ export default function EditorDashboardComponent({
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Approved Videos"
-                        count={editorData?.approvedVideos!}
+                        count={editorData?.approvedVideos ?? 0}
                     >
                         <div className="p-2 rounded-full bg-[#adebad]">
                             <MdOutlineCheckCircleOutline className="md:text-2xl text-[#29a329] font-bold" />
@@ -98,7 +96,7 @@ export default function EditorDashboardComponent({
                     </CountBoxDashboardComponent>
                     <CountBoxDashboardComponent
                         heading="Pending Approvals"
-                        count={editorData?.pendingVideos!}
+                        count={editorData?.pendingVideos ?? 0}
                     >
                         <div className="p-2 rounded-full bg-[#ffff80]">
                             <LuClock4 className="md:text-2xl text-[#b3b300] font-bold" />

@@ -54,7 +54,7 @@ export default function YouTubeChannelDetailsComponent({
 
     useEffect(() => {
         fetchChannelData();
-    }, []);
+    }, [accessToken]);
 
     return (
         <>

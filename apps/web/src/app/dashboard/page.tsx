@@ -1,13 +1,7 @@
 import DashboardComponent from '@/components/dashboard';
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
-import { Metadata } from 'next';
-import axios from 'axios';
 import { authOptions } from '@/lib/auth';
-
-const metadata: Metadata = {
-    title: 'Dashboard | Creator Bridge',
-};
 
 export default async function Dashboard() {
     const session = await getServerSession(authOptions);
