@@ -158,8 +158,11 @@ const youtubeCallback = asyncHandler(
 
             const encryptionKey = TokenEncryption.generateKey();
             const tokenEncryption = new TokenEncryption(encryptionKey);
-            const encryptedToken = tokenEncryption.encrypt(
+            const encryptedAcessToken = tokenEncryption.encrypt(
                 token.tokens.access_token!
+            );
+            const encryptedRefreshToken = tokenEncryption.encrypt(
+                token.tokens.refresh_token!
             );
 
             await prisma.userYoutubeToken.deleteMany({
@@ -170,9 +173,12 @@ const youtubeCallback = asyncHandler(
                 data: {
                     userId: creator.id!,
                     encryptionKey,
-                    encryptedToken: encryptedToken.encryptedToken,
-                    iv: encryptedToken.iv,
-                    authTag: encryptedToken.authTag,
+                    accessToken: encryptedAcessToken.encryptedToken,
+                    accessIv: encryptedAcessToken.iv,
+                    accessAuthTag: encryptedAcessToken.authTag,
+                    refreshToken: encryptedRefreshToken.encryptedToken,
+                    refreshIv: encryptedRefreshToken.iv,
+                    refreshAuthTag: encryptedRefreshToken.authTag,
                 },
             });
 
@@ -223,9 +229,9 @@ const uploadVideoToYoutube = asyncHandler(
                 youtubeToken.encryptionKey
             );
             const decryptedYouTubeToken = tokenEncryption.decrypt({
-                encryptedToken: youtubeToken.encryptedToken,
-                iv: youtubeToken.iv,
-                authTag: youtubeToken.authTag,
+                encryptedToken: youtubeToken.accessToken,
+                iv: youtubeToken.accessIv,
+                authTag: youtubeToken.accessAuthTag,
             });
 
             const oauth2Client = new OAuth2Client(
@@ -321,11 +327,18 @@ const getYoutubeChannelDetails = asyncHandler(
             const tokenEncryption = new TokenEncryption(
                 youtubeToken.encryptionKey
             );
-            const decryptedYouTubeToken = tokenEncryption.decrypt({
-                encryptedToken: youtubeToken.encryptedToken,
-                iv: youtubeToken.iv,
-                authTag: youtubeToken.authTag,
+            const decryptedAccessToken = tokenEncryption.decrypt({
+                encryptedToken: youtubeToken.accessToken,
+                iv: youtubeToken.accessIv,
+                authTag: youtubeToken.accessAuthTag,
             });
+            const decryptedRefreshToken = youtubeToken.refreshToken
+                ? tokenEncryption.decrypt({
+                      encryptedToken: youtubeToken.refreshToken,
+                      iv: youtubeToken.refreshIv,
+                      authTag: youtubeToken.refreshAuthTag,
+                  })
+                : null;
 
             const oauth2Client = new OAuth2Client(
                 process.env.YOUTUBE_CLIENT_ID!,
@@ -334,8 +347,12 @@ const getYoutubeChannelDetails = asyncHandler(
             );
 
             oauth2Client.setCredentials({
-                access_token: decryptedYouTubeToken,
+                access_token: decryptedAccessToken,
+                refresh_token: decryptedRefreshToken || undefined,
             });
+
+            const tokenInfo = await oauth2Client.getAccessToken(); // This automatically refreshes if needed
+            oauth2Client.setCredentials({ access_token: tokenInfo.token });
 
             const youtube = google.youtube({
                 version: 'v3',
