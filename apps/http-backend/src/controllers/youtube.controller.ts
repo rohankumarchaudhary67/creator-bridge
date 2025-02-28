@@ -303,7 +303,7 @@ const uploadVideoToYoutube = asyncHandler(
 
 const getYoutubeChannelDetails = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
-        const id = req.body.id;
+        const { id } = req.body;
 
         try {
             const youtubeCreator = await prisma.youTubeCreator.findFirst({
@@ -327,11 +327,13 @@ const getYoutubeChannelDetails = asyncHandler(
             const tokenEncryption = new TokenEncryption(
                 youtubeToken.encryptionKey
             );
+
             const decryptedAccessToken = tokenEncryption.decrypt({
                 encryptedToken: youtubeToken.accessToken,
                 iv: youtubeToken.accessIv,
                 authTag: youtubeToken.accessAuthTag,
             });
+
             const decryptedRefreshToken = youtubeToken.refreshToken
                 ? tokenEncryption.decrypt({
                       encryptedToken: youtubeToken.refreshToken,
@@ -351,8 +353,38 @@ const getYoutubeChannelDetails = asyncHandler(
                 refresh_token: decryptedRefreshToken || undefined,
             });
 
-            const tokenInfo = await oauth2Client.getAccessToken(); // This automatically refreshes if needed
-            oauth2Client.setCredentials({ access_token: tokenInfo.token });
+            let newAccessToken = decryptedAccessToken!;
+
+            try {
+                const tokenInfo =
+                    await oauth2Client.getTokenInfo(decryptedAccessToken);
+                console.log('Token Info:', tokenInfo);
+            } catch (tokenError) {
+                if (!decryptedRefreshToken) {
+                    return res
+                        .status(401)
+                        .json(
+                            new ApiError(
+                                401,
+                                'Access token invalid and no refresh token available'
+                            )
+                        );
+                }
+                try {
+                    const { credentials } =
+                        await oauth2Client.refreshAccessToken();
+                    newAccessToken = credentials.access_token!;
+                    oauth2Client.setCredentials({
+                        access_token: newAccessToken,
+                    });
+                } catch (refreshError) {
+                    return res
+                        .status(401)
+                        .json(
+                            new ApiError(401, 'Failed to refresh access token')
+                        );
+                }
+            }
 
             const youtube = google.youtube({
                 version: 'v3',
@@ -365,6 +397,7 @@ const getYoutubeChannelDetails = asyncHandler(
             });
 
             const channel = response.data.items?.[0];
+
             if (!channel) {
                 return res
                     .status(404)
@@ -375,9 +408,20 @@ const getYoutubeChannelDetails = asyncHandler(
                 where: { ownerId: youtubeCreator.id },
             });
 
-            const updatedChannel = await prisma.youtubeChannel.update({
-                where: { id: youtubeChannel?.id },
-                data: {
+            const updatedChannel = await prisma.youtubeChannel.upsert({
+                where: { id: youtubeChannel?.id || '' },
+                update: {
+                    channelId: channel.id,
+                    channelTitle: channel.snippet?.title,
+                    channelDescription: channel.snippet?.description,
+                    subscriberCount: parseInt(
+                        channel.statistics?.subscriberCount || '0'
+                    ),
+                    videoCount: parseInt(channel.statistics?.videoCount || '0'),
+                    thumbnailUrl: channel.snippet?.thumbnails?.high?.url,
+                },
+                create: {
+                    ownerId: youtubeCreator.id,
                     channelId: channel.id,
                     channelTitle: channel.snippet?.title,
                     channelDescription: channel.snippet?.description,
