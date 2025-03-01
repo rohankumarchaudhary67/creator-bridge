@@ -101,7 +101,7 @@ export default function YouTubeChannelDetailsComponent({
                                 </div>
                             </div>
                         </div>
-                        <VideoEditorsComponent />
+                        <VideoEditorsComponent accessToken={accessToken} />
                     </div>
                 )}
             </div>

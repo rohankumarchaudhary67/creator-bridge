@@ -4,6 +4,7 @@ import '@/styles/globals.css';
 import { ThemeProvider } from '@/providers/theme-provider';
 import { Session_Provider } from '@/providers/session-provider';
 import ReduxProvider from '@/providers/redux-provider';
+import { Toaster } from '@/components/ui/sonner';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -41,6 +42,7 @@ export default function RootLayout({
                 >
                     <Session_Provider>
                         <ReduxProvider>{children}</ReduxProvider>
+                        <Toaster richColors />
                     </Session_Provider>
                 </ThemeProvider>
             </body>

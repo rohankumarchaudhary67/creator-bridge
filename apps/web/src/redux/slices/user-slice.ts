@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { redirect } from 'next/navigation';
 
 interface DataState {
     data: {

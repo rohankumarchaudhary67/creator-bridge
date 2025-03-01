@@ -111,13 +111,21 @@ model VideoRequest {
 }
 
 model JoinRequest {
-  id        String         @id @default(uuid())
-  senderId  String
-  sender    YouTubeCreator @relation("Sender", fields: [senderId], references: [id])
-  requestId String
-  status    JoinStatus
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  id                           String         @id @default(uuid())
+  senderId                     String
+  sender                       YouTubeCreator @relation("Sender", fields: [senderId], references: [id])
+  senderName                   String         @default("")
+  senderEmail                  String         @default("")
+  senderImage                  String         @default("")
+  senderYouTubeChannelName     String         @default("")
+  senderYouTubeChannelId       String         @default("")
+  senderYouTubeChannelImage    String         @default("")
+  senderYouTubeSubscriberCount Int            @default(0)
+  requestId                    String         @unique
+  recieverEmail                String         @default("")
+  status                       JoinStatus
+  createdAt                    DateTime       @default(now())
+  updatedAt                    DateTime       @updatedAt
 }
 
 enum role {

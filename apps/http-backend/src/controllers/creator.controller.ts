@@ -105,7 +105,20 @@ const sendRequestToAddEditor = asyncHandler(
 
             const requestId = generateRequestId();
             await prisma.joinRequest.create({
-                data: { senderId: creator.id, requestId, status: 'Pending' },
+                data: {
+                    senderName: user.name!,
+                    senderEmail: user.email!,
+                    senderImage: user.image!,
+                    senderYouTubeChannelName: youtubeChannel.channelTitle!,
+                    senderYouTubeChannelId: youtubeChannel.channelId!,
+                    senderYouTubeChannelImage: youtubeChannel.thumbnailUrl!,
+                    senderYouTubeSubscriberCount:
+                        youtubeChannel.subscriberCount!,
+                    recieverEmail: email,
+                    senderId: creator.id,
+                    requestId,
+                    status: 'Pending',
+                },
             });
 
             await sendJoinRequestEmail({
@@ -128,4 +141,61 @@ const sendRequestToAddEditor = asyncHandler(
     }
 );
 
-export { fetchCreator, sendRequestToAddEditor };
+const fetchEditorRequests = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+        const { id } = req.body;
+
+        try {
+            const creator = await prisma.youTubeCreator.findFirst({
+                where: { ownerId: id },
+            });
+            if (!creator) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Creator not found'));
+            }
+
+            const editorRequests = await prisma.joinRequest.findMany({
+                where: { senderId: creator.id },
+                select: {
+                    recieverEmail: true,
+                    status: true,
+                },
+            });
+            if (!editorRequests) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Editor requests not found'));
+            }
+
+            const responseData = {
+                pendingStatus: editorRequests.filter(
+                    (request) => request.status === 'Pending'
+                ),
+                approvedStatus: editorRequests.filter(
+                    (request) => request.status === 'Approved'
+                ),
+                rejectedStatus: editorRequests.filter(
+                    (request) => request.status === 'Rejected'
+                ),
+            };
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        responseData,
+                        'Editor requests fetched successfully'
+                    )
+                );
+        } catch (error) {
+            console.error('Error fetching editor requests:', error);
+            return res
+                .status(500)
+                .json(new ApiError(500, 'Internal server error'));
+        }
+    }
+);
+
+export { fetchCreator, sendRequestToAddEditor, fetchEditorRequests };
