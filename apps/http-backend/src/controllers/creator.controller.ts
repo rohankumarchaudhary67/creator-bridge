@@ -103,6 +103,16 @@ const sendRequestToAddEditor = asyncHandler(
                     .json(new ApiError(404, 'YouTube channel not found'));
             }
 
+            const request = await prisma.joinRequest.findFirst({
+                where: { recieverEmail: email },
+            });
+
+            if (request) {
+                return res
+                    .status(200)
+                    .json(new ApiResponse(200, {}, 'Request already sent'));
+            }
+
             const requestId = generateRequestId();
             await prisma.joinRequest.create({
                 data: {
@@ -168,24 +178,12 @@ const fetchEditorRequests = asyncHandler(
                     .json(new ApiError(404, 'Editor requests not found'));
             }
 
-            const responseData = {
-                pendingStatus: editorRequests.filter(
-                    (request) => request.status === 'Pending'
-                ),
-                approvedStatus: editorRequests.filter(
-                    (request) => request.status === 'Approved'
-                ),
-                rejectedStatus: editorRequests.filter(
-                    (request) => request.status === 'Rejected'
-                ),
-            };
-
             return res
                 .status(200)
                 .json(
                     new ApiResponse(
                         200,
-                        responseData,
+                        editorRequests,
                         'Editor requests fetched successfully'
                     )
                 );

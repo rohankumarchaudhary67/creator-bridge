@@ -1,7 +1,6 @@
 'use client';
 import { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
     Dialog,
     DialogContent,
@@ -29,9 +28,7 @@ export default function VideoEditorsComponent({
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const emailRef = useRef<HTMLInputElement>(null);
 
-    const [pendingEditors, setPendingEditors] = useState<EditorProps[]>([]);
-    const [approvedEditors, setApprovedEditors] = useState<EditorProps[]>([]);
-    const [rejectedEditors, setRejectedEditors] = useState<EditorProps[]>([]);
+    const [editorsRequest, setEditorsRequest] = useState<EditorProps[]>([]);
 
     const handleSendRequest = async () => {
         const toastId = toast.loading('Sending request...');
@@ -49,12 +46,17 @@ export default function VideoEditorsComponent({
                 }
             );
             console.log(response.data);
-            setIsDialogOpen(false); // Close the dialog
-            setPendingEditors((prev) => [
-                ...prev,
-                { recieverEmail: email, status: 'Pending' },
-            ]); // Add to requested list
-            toast.success('Request sent successfully!', { id: toastId });
+            setIsDialogOpen(false);
+            if (response.data.message === 'Request already sent') {
+                toast.warning('Request already sent!', { id: toastId });
+                return;
+            } else {
+                setEditorsRequest((prev) => [
+                    ...prev,
+                    { recieverEmail: email, status: 'Pending' },
+                ]); // Add to requested list
+                toast.success('Request sent successfully!', { id: toastId });
+            }
         } catch (error) {
             console.error('Error sending request:', error);
         }
@@ -69,12 +71,7 @@ export default function VideoEditorsComponent({
                 },
             }
         );
-
-        const { pendingStatus, approvedStatus, rejectedStatus } =
-            response.data.data;
-        setPendingEditors(pendingStatus);
-        setApprovedEditors(approvedStatus);
-        setRejectedEditors(rejectedStatus);
+        setEditorsRequest(response.data.data);
     };
 
     useEffect(() => {
@@ -93,7 +90,7 @@ export default function VideoEditorsComponent({
                             className="font-sane font-semibold"
                             onClick={() => setIsDialogOpen(true)}
                         >
-                            Editor <TiUserAdd />
+                            Add <TiUserAdd />
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="bg-muted">
@@ -135,12 +132,9 @@ export default function VideoEditorsComponent({
             </div>
 
             <div className="flex flex-col space-y-6 pt-4">
-                {approvedEditors.length > 0 && (
+                {editorsRequest.length > 0 && (
                     <div>
-                        <h2 className="font-sans font-semibold text-lg pb-2">
-                            Approved
-                        </h2>
-                        {approvedEditors.map((editor, index) => (
+                        {editorsRequest.map((editor, index) => (
                             <div
                                 key={index}
                                 className="flex justify-between items-center bg-muted rounded-lg px-4 py-2"
@@ -148,51 +142,11 @@ export default function VideoEditorsComponent({
                                 <p className="font-sans">
                                     {editor.recieverEmail}
                                 </p>
-                                <p className="text-green-600">
+                                <p
+                                    className={`${editor.status === 'Pending' && 'text-yellow-600'} ${editor.status === 'Approved' && 'text-green-600'} ${editor.status === 'Rejected' && 'text-red-600'}`}
+                                >
                                     {editor.status}
                                 </p>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                {pendingEditors.length > 0 && (
-                    <div>
-                        <h2 className="font-sans font-semibold text-lg pb-2">
-                            Pending
-                        </h2>
-                        <div className="flex flex-col space-y-2">
-                            {pendingEditors.map((editor, index) => (
-                                <div
-                                    key={index}
-                                    className="flex justify-between items-center bg-muted rounded-lg px-4 py-2"
-                                >
-                                    <p className="font-sans">
-                                        {editor.recieverEmail}
-                                    </p>
-                                    <p className="text-yellow-600">
-                                        {editor.status}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {rejectedEditors.length > 0 && (
-                    <div>
-                        <h2 className="font-sans font-semibold text-lg pb-2">
-                            Rejected
-                        </h2>
-                        {rejectedEditors.map((editor, index) => (
-                            <div
-                                key={index}
-                                className="flex justify-between items-center bg-muted rounded-lg px-4 py-2"
-                            >
-                                <p className="font-sans">
-                                    {editor.recieverEmail}
-                                </p>
-                                <p className="text-red-600">{editor.status}</p>
                             </div>
                         ))}
                     </div>
