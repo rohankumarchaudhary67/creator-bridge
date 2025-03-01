@@ -133,7 +133,7 @@ export default function VideoEditorsComponent({
 
             <div className="flex flex-col space-y-6 pt-4">
                 {editorsRequest.length > 0 && (
-                    <div>
+                    <div className="flex flex-col space-y-2">
                         {editorsRequest.map((editor, index) => (
                             <div
                                 key={index}

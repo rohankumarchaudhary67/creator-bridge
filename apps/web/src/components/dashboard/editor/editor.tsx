@@ -13,6 +13,7 @@ import { FaBuildingUser } from 'react-icons/fa6';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import PendingRequestComponent from './pending-request';
 
 interface EditorData {
     pendingVideos: number;
@@ -103,6 +104,8 @@ export default function EditorDashboardComponent({
                         </div>
                     </CountBoxDashboardComponent>
                 </div>
+
+                <PendingRequestComponent accessToken={accessToken as string} />
 
                 {/* <EditorRecentVideosDashboardComponent data={data} /> */}
                 <VideoUploadFormDashboardComponent />

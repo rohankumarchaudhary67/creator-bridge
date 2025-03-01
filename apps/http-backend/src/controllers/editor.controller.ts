@@ -38,9 +38,76 @@ const fetchEditor = asyncHandler(
     }
 );
 
-const acceptCreatorRequest = asyncHandler(
+const fetchEditorRequests = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
-        const { id, requestId } = req.body;
+        const { id } = req.body;
+
+        try {
+            const user = await prisma.user.findFirst({
+                where: { id },
+            });
+            if (!user) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'User not found'));
+            }
+
+            const editor = await prisma.youTubeEditor.findFirst({
+                where: { ownerId: user.id },
+            });
+            if (!editor) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Editor not found'));
+            }
+
+            const editorRequests = await prisma.joinRequest.findMany({
+                where: { recieverEmail: user.email },
+                select: {
+                    requestId: true,
+                    senderName: true,
+                    senderEmail: true,
+                    senderImage: true,
+                    senderYouTubeChannelName: true,
+                    senderYouTubeChannelId: true,
+                    senderYouTubeChannelImage: true,
+                    senderYouTubeSubscriberCount: true,
+                    status: true,
+                },
+            });
+            if (!editorRequests) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Editor requests not found'));
+            }
+
+            const responseData = {
+                pendingRequests: editorRequests.filter(
+                    (request) => request.status === 'Pending'
+                ),
+            };
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        responseData,
+                        'Editor requests fetched successfully'
+                    )
+                );
+        } catch (error) {
+            console.error('Error fetching editor requests:', error);
+            return res
+                .status(500)
+                .json(new ApiError(500, 'Internal server error'));
+        }
+    }
+);
+
+const handleCreatorRequest = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+        const { id, requestId, action } = req.body;
 
         if (!id || !requestId) {
             return res
@@ -89,7 +156,7 @@ const acceptCreatorRequest = asyncHandler(
 
             await prisma.joinRequest.update({
                 where: { id: request.id },
-                data: { status: 'Approved' },
+                data: { status: action },
             });
 
             return res
@@ -104,4 +171,4 @@ const acceptCreatorRequest = asyncHandler(
     }
 );
 
-export { fetchEditor, acceptCreatorRequest };
+export { fetchEditor, handleCreatorRequest, fetchEditorRequests };
