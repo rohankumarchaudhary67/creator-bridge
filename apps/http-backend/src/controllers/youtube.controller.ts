@@ -182,7 +182,7 @@ const youtubeCallback = asyncHandler(
                 },
             });
 
-            return res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+            return res.redirect(`${process.env.NEXT_PUBLIC_WEB_URL}/dashboard`);
         } catch (error) {
             console.error('Error processing YouTube callback:', error);
             return res

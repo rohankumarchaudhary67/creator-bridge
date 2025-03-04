@@ -108,7 +108,7 @@ export default function EditorDashboardComponent({
                 <PendingRequestComponent accessToken={accessToken as string} />
 
                 {/* <EditorRecentVideosDashboardComponent data={data} /> */}
-                <VideoUploadFormDashboardComponent />
+                {/* <VideoUploadFormDashboardComponent /> */}
                 {/* <EditorRequestVideosDashboardComponent data={videoData} /> */}
             </div>
         </>

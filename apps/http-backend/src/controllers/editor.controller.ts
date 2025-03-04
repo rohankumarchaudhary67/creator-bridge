@@ -171,4 +171,36 @@ const handleCreatorRequest = asyncHandler(
     }
 );
 
+const fetchYouTubeCreator = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+        const { id } = req.body;
+
+        try {
+            const creator = await prisma.youTubeCreator.findFirst({
+                where: { ownerId: id },
+            });
+            if (!creator) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Creator not found'));
+            }
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        creator,
+                        'Creator fetched successfully'
+                    )
+                );
+        } catch (error) {
+            console.error('Error fetching user:', error);
+            return res
+                .status(500)
+                .json(new ApiError(500, 'Error fetching user'));
+        }
+    }
+);
+
 export { fetchEditor, handleCreatorRequest, fetchEditorRequests };
