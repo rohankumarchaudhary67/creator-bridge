@@ -171,18 +171,43 @@ const handleCreatorRequest = asyncHandler(
     }
 );
 
-const fetchYouTubeCreator = asyncHandler(
+const fetchYouTubeEnvironment = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
-        const { id } = req.body;
+        const { id } = req.body; // Editor's ID
 
         try {
-            const creator = await prisma.youTubeCreator.findFirst({
+            // Find the editor and get the associated creators
+            const editor = await prisma.youTubeEditor.findUnique({
                 where: { ownerId: id },
+                include: {
+                    youtuberEnvironment: {
+                        include: {
+                            owner: {
+                                select: {
+                                    name: true,
+                                    email: true,
+                                    image: true,
+                                },
+                            },
+                            youtubeChannel: {
+                                select: {
+                                    channelId: true,
+                                    channelTitle: true,
+                                    channelDescription: true,
+                                    subscriberCount: true,
+                                    videoCount: true,
+                                    thumbnailUrl: true,
+                                },
+                            },
+                        },
+                    },
+                },
             });
-            if (!creator) {
+
+            if (!editor) {
                 return res
                     .status(404)
-                    .json(new ApiError(404, 'Creator not found'));
+                    .json(new ApiError(404, 'Editor not found'));
             }
 
             return res
@@ -190,17 +215,22 @@ const fetchYouTubeCreator = asyncHandler(
                 .json(
                     new ApiResponse(
                         200,
-                        creator,
-                        'Creator fetched successfully'
+                        editor.youtuberEnvironment,
+                        'Creator(s) fetched successfully'
                     )
                 );
         } catch (error) {
-            console.error('Error fetching user:', error);
+            console.error('Error fetching YouTube Creator:', error);
             return res
                 .status(500)
-                .json(new ApiError(500, 'Error fetching user'));
+                .json(new ApiError(500, 'Error fetching YouTube Creator'));
         }
     }
 );
 
-export { fetchEditor, handleCreatorRequest, fetchEditorRequests };
+export {
+    fetchEditor,
+    handleCreatorRequest,
+    fetchEditorRequests,
+    fetchYouTubeEnvironment,
+};

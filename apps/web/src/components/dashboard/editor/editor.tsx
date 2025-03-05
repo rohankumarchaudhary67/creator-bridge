@@ -3,7 +3,6 @@ import HeaderDashboardComponent from '../header';
 import { MdSlowMotionVideo, MdOutlineCheckCircleOutline } from 'react-icons/md';
 import { LuClock4 } from 'react-icons/lu';
 import CountBoxDashboardComponent from '../count-box';
-import VideoUploadFormDashboardComponent from './video-upload-form';
 import { UserNav } from '../user-nav';
 import NotificationComponent from '../notification';
 import Link from 'next/link';
@@ -14,6 +13,8 @@ import { IoSettingsSharp } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import PendingRequestComponent from './pending-request';
+import YoutubeEnvironmentComponent from './youtube-environment';
+import EditorRequestVideosDashboardComponent from './request-videos';
 
 interface EditorData {
     pendingVideos: number;
@@ -107,9 +108,11 @@ export default function EditorDashboardComponent({
 
                 <PendingRequestComponent accessToken={accessToken as string} />
 
-                {/* <EditorRecentVideosDashboardComponent data={data} /> */}
-                {/* <VideoUploadFormDashboardComponent /> */}
-                {/* <EditorRequestVideosDashboardComponent data={videoData} /> */}
+                <YoutubeEnvironmentComponent
+                    accessToken={accessToken as string}
+                />
+
+                {/* <EditorRequestVideosDashboardComponent /> */}
             </div>
         </>
     );
