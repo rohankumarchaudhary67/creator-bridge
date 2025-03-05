@@ -2,12 +2,17 @@ import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 
 // Function to extract public_id from a Cloudinary URL
-function getPublicIdFromUrl(url: string) {
-    const urlParts = url.split('/');
-    const publicIdWithExtension = urlParts[urlParts.length - 1];
-    const publicId = publicIdWithExtension?.split('.')[0]; // Remove the file extension
-    return publicId;
-}
+const getPublicIdFromUrl = (url: string) => {
+    try {
+        const parts = url.split('/');
+        const filename = parts[parts.length - 1]; // Extract the last part
+        const publicId = filename?.split('.')[0]; // Remove file extension
+        return publicId;
+    } catch (error) {
+        console.error('Error extracting public ID:', error);
+        return null;
+    }
+};
 
 const uploadOnCloudinary = async (localFilePath: string) => {
     if (!localFilePath) return null;
@@ -47,22 +52,25 @@ const uploadOnCloudinary = async (localFilePath: string) => {
 };
 
 const deleteOnCloudinary = async (oldFileLink: string) => {
-    // Configuration
-    cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET,
-    });
+    if (!oldFileLink) {
+        console.log('No file link provided');
+        return;
+    }
 
-    // Extract the public_id from the URL
     const publicId = getPublicIdFromUrl(oldFileLink);
+    if (!publicId) {
+        console.log('Invalid public ID extracted');
+        return;
+    }
 
-    // Delete the image using the extracted public_id
-    const deleteResult = await cloudinary.uploader
-        .destroy(publicId!)
-        .catch((error) => {
-            console.log(error);
+    try {
+        const deleteResult = await cloudinary.uploader.destroy(publicId, {
+            resource_type: 'video',
         });
+        return deleteResult;
+    } catch (error) {
+        console.error('Error deleting video from Cloudinary:', error);
+    }
 };
 
 export { uploadOnCloudinary, deleteOnCloudinary };

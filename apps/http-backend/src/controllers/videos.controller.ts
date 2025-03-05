@@ -15,7 +15,7 @@ const generateRequestId = () => uuidv4();
 
 const uploadVideo = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
-        const { title, description, id } = req.body;
+        const { id, title, description, category, visibility } = req.body;
 
         if (!title || !description || !id) {
             return res
@@ -24,113 +24,95 @@ const uploadVideo = asyncHandler(
         }
 
         try {
-            const user = await prisma.user.findUnique({
-                where: {
-                    id: id,
-                },
-            });
-
-            if (user?.role !== 'Editor') {
+            const user = await prisma.user.findUnique({ where: { id } });
+            if (!user) {
                 return res
                     .status(401)
-                    .json(new ApiError(401, 'user is not an editor'));
+                    .json(new ApiError(401, 'User not found'));
+            }
+            // Verify if user is an editor
+            const editor = await prisma.youTubeEditor.findUnique({
+                where: { ownerId: id },
+                include: { youtuberEnvironment: true }, // Fetch creator details
+            });
+
+            if (!editor) {
+                return res
+                    .status(401)
+                    .json(new ApiError(401, 'User is not an editor'));
             }
 
             const files = req.files as MulterFiles;
             const videoFilePath = files?.video?.[0]?.path;
 
             if (!videoFilePath) {
-                return res.status(400).json({
-                    message: 'Missing video file',
-                });
+                return res
+                    .status(400)
+                    .json(new ApiError(400, 'Missing video file'));
             }
 
-            const video = await uploadOnCloudinary(videoFilePath);
-
-            if (!video) {
+            // Upload video to Cloudinary
+            const uploadedVideo = await uploadOnCloudinary(videoFilePath);
+            if (!uploadedVideo) {
                 return res
                     .status(400)
                     .json(new ApiError(400, 'Error uploading video'));
             }
 
-            await prisma.youTubeVideo.create({
+            // Save video metadata in the database
+            const video = await prisma.youTubeVideo.create({
                 data: {
+                    editorId: editor.id,
+                    videoString: uploadedVideo.secure_url, // Cloudinary URL
                     title,
                     description,
-                    videoString: video.url,
-                    editorId: id,
+                    category,
+                    visibility,
+                    status: 'Pending',
                 },
             });
 
-            return res
-                .status(201)
-                .json(new ApiResponse(201, 'Video uploaded successfully'));
-        } catch (error) {
-            console.log(error);
-            return res
-                .status(500)
-                .json(new ApiError(500, 'Internal Server Error'));
-        }
-    }
-);
-
-const sendRequestToCreator = asyncHandler(
-    async (req: Request, res: Response): Promise<any> => {
-        const { id, videoId } = req.body;
-
-        if (!id || !videoId) {
-            return res
-                .status(400)
-                .json(new ApiError(400, 'User ID and video ID are required'));
-        }
-
-        try {
-            const user = await prisma.user.findUnique({ where: { id } });
-            if (user?.role !== 'Editor') {
+            // Get Creator details
+            const creator = editor.youtuberEnvironment[0];
+            if (!creator) {
                 return res
-                    .status(401)
-                    .json(new ApiError(401, 'user is not an editor'));
+                    .status(400)
+                    .json(
+                        new ApiError(400, 'No associated YouTube Creator found')
+                    );
             }
 
-            const video = await prisma.youTubeVideo.findUnique({
-                where: { id: videoId },
+            // Get Creator's owner (User) details
+            const creatorOwner = await prisma.user.findUnique({
+                where: { id: creator.ownerId },
             });
-            if (!video) {
+
+            if (!creatorOwner) {
                 return res
-                    .status(404)
-                    .json(new ApiError(404, 'Video not found'));
+                    .status(400)
+                    .json(new ApiError(400, 'YouTube Creator owner not found'));
             }
 
-            const youtubeOwner = await prisma.youTubeCreator.findFirst({
-                where: {
-                    editors: {
-                        some: {
-                            id: user.id,
-                        },
-                    },
-                },
-            });
-
-            const youtuberData = await prisma.user.findFirst({
-                where: { id: youtubeOwner?.ownerId },
-            });
-
-            const request = await prisma.joinRequest.create({
+            // Create a video request for the creator
+            const request = await prisma.videoRequest.create({
                 data: {
-                    senderId: user.id,
+                    senderId: editor.id,
+                    recieverId: creator.id,
+                    videoId: video.id,
                     requestId: generateRequestId(),
                     status: 'Pending',
                 },
             });
 
-            const requestEmail = await sendVideoUploadRequestEmail({
-                email: youtuberData?.email!,
+            // Send email notification to the creator
+            await sendVideoUploadRequestEmail({
+                email: creatorOwner.email!,
                 edtorName: user.name!,
-                editorEmail: user.email,
+                editorEmail: user.email!,
                 requestId: request.requestId,
-                videoTitle: video?.title!,
-                videoDescription: video?.description!,
-                videoString: video?.videoString!,
+                videoTitle: video.title!,
+                videoDescription: video.description!,
+                videoString: video.videoString!,
             });
 
             return res
@@ -138,12 +120,11 @@ const sendRequestToCreator = asyncHandler(
                 .json(
                     new ApiResponse(
                         201,
-                        requestEmail,
-                        'Video upload request sent successfully'
+                        'Video uploaded and request sent successfully'
                     )
                 );
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return res
                 .status(500)
                 .json(new ApiError(500, 'Internal Server Error'));
@@ -151,4 +132,4 @@ const sendRequestToCreator = asyncHandler(
     }
 );
 
-export { uploadVideo, sendRequestToCreator };
+export { uploadVideo };

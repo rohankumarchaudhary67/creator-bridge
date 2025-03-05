@@ -192,114 +192,121 @@ const youtubeCallback = asyncHandler(
     }
 );
 
-const uploadVideoToYoutube = asyncHandler(
-    async (req: Request, res: Response): Promise<any> => {
-        const { id, videoId } = req.body;
+const uploadVideoToYouTubeHelper = async (id: string, videoId: string) => {
+    try {
+        // Fetch video and user token details
+        const youtubeVideo = await prisma.youTubeVideo.findFirst({
+            where: { id: videoId },
+        });
 
-        if (!id || !videoId) {
-            return res
-                .status(400)
-                .json(new ApiError(400, 'Missing required fields'));
+        if (!youtubeVideo) {
+            throw new Error('YouTube video not found');
         }
+
+        const youtubeToken = await prisma.userYoutubeToken.findFirst({
+            where: { userId: id },
+        });
+
+        if (!youtubeToken) {
+            throw new Error('YouTube token not found');
+        }
+
+        // Decrypt access token
+        const tokenEncryption = new TokenEncryption(youtubeToken.encryptionKey);
+        const decryptedAccessToken = tokenEncryption.decrypt({
+            encryptedToken: youtubeToken.accessToken,
+            iv: youtubeToken.accessIv,
+            authTag: youtubeToken.accessAuthTag,
+        });
+
+        const decryptedRefreshToken = youtubeToken.refreshToken
+            ? tokenEncryption.decrypt({
+                  encryptedToken: youtubeToken.refreshToken,
+                  iv: youtubeToken.refreshIv,
+                  authTag: youtubeToken.refreshAuthTag,
+              })
+            : null;
+
+        const oauth2Client = new OAuth2Client(
+            process.env.YOUTUBE_CLIENT_ID!,
+            process.env.YOUTUBE_CLIENT_SECRET!,
+            process.env.YOUTUBE_REDIRECT_URI!
+        );
+
+        oauth2Client.setCredentials({
+            access_token: decryptedAccessToken,
+            refresh_token: decryptedRefreshToken || undefined,
+        });
+
+        let newAccessToken = decryptedAccessToken!;
 
         try {
-            const youtubeVideo = await prisma.youTubeVideo.findFirst({
-                where: { id: videoId },
-            });
-
-            const youtubeChannel = await prisma.youtubeChannel.findFirst({
-                where: { ownerId: id },
-            });
-            if (!youtubeChannel) {
-                return res
-                    .status(400)
-                    .json(new ApiError(400, 'YouTube channel not found'));
+            const tokenInfo =
+                await oauth2Client.getTokenInfo(decryptedAccessToken);
+            console.log('Token Info:', tokenInfo);
+        } catch (tokenError) {
+            if (!decryptedRefreshToken) {
+                console.log('No refresh token available');
             }
-
-            const youtubeToken = await prisma.userYoutubeToken.findFirst({
-                where: { userId: id },
-            });
-            if (!youtubeToken) {
-                return res
-                    .status(400)
-                    .json(new ApiError(400, 'YouTube token not found'));
-            }
-
-            const tokenEncryption = new TokenEncryption(
-                youtubeToken.encryptionKey
-            );
-            const decryptedYouTubeToken = tokenEncryption.decrypt({
-                encryptedToken: youtubeToken.accessToken,
-                iv: youtubeToken.accessIv,
-                authTag: youtubeToken.accessAuthTag,
-            });
-
-            const oauth2Client = new OAuth2Client(
-                process.env.YOUTUBE_CLIENT_ID!,
-                process.env.YOUTUBE_CLIENT_SECRET!,
-                process.env.YOUTUBE_REDIRECT_URI!
-            );
-
-            oauth2Client.setCredentials({
-                access_token: decryptedYouTubeToken,
-            });
-
-            const youtube = google.youtube({
-                version: 'v3',
-                auth: oauth2Client,
-            });
-
-            if (youtubeVideo?.videoString) {
-                const response = await axios({
-                    url: youtubeVideo.videoString,
-                    method: 'GET',
-                    responseType: 'stream',
+            try {
+                const { credentials } = await oauth2Client.refreshAccessToken();
+                newAccessToken = credentials.access_token!;
+                oauth2Client.setCredentials({
+                    access_token: newAccessToken,
                 });
-                const tempFilePath = path.join(__dirname, 'temp.mp4');
-                const tempFile = fs.createWriteStream(tempFilePath);
-                await streamPipeline(response.data, tempFile);
-
-                const uploadResponse = await youtube.videos.insert({
-                    part: ['snippet', 'status'],
-                    requestBody: {
-                        snippet: {
-                            title: youtubeVideo.title,
-                            description: youtubeVideo.description,
-                            categoryId: '22', // Topic category
-                            tags: ['gossipu', 'creator', 'video'],
-                        },
-                        status: {
-                            privacyStatus: 'private',
-                        },
-                    },
-                    media: {
-                        body: fs.createReadStream(tempFilePath),
-                    },
-                });
-
-                fs.unlinkSync(tempFilePath);
-
-                return res
-                    .status(200)
-                    .json(
-                        new ApiResponse(
-                            200,
-                            'YouTube video uploaded successfully'
-                        )
-                    );
-            } else {
-                return res
-                    .status(400)
-                    .json(new ApiError(400, 'Invalid video string'));
+            } catch (refreshError) {
+                console.log('Failed to refresh access token');
             }
-        } catch (error) {
-            console.error('Error uploading video to YouTube:', error);
-            return res
-                .status(500)
-                .json(new ApiError(500, 'Internal server error'));
         }
+
+        const youtube = google.youtube({
+            version: 'v3',
+            auth: oauth2Client,
+        });
+
+        if (youtubeVideo.videoString) {
+            // Download video from Cloudinary or storage URL
+            const response = await axios({
+                url: youtubeVideo.videoString,
+                method: 'GET',
+                responseType: 'stream',
+            });
+
+            const tempFilePath = path.join(__dirname, 'temp.mp4');
+            const tempFile = fs.createWriteStream(tempFilePath);
+            await streamPipeline(response.data, tempFile);
+
+            // Upload video to YouTube
+            const uploadResponse = await youtube.videos.insert({
+                part: ['snippet', 'status'],
+                requestBody: {
+                    snippet: {
+                        title: youtubeVideo.title,
+                        description: youtubeVideo.description,
+                        categoryId: youtubeVideo.category,
+                        tags: youtubeVideo.tags,
+                    },
+                    status: {
+                        privacyStatus: 'private',
+                    },
+                },
+                media: {
+                    body: fs.createReadStream(tempFilePath),
+                },
+            });
+
+            // Clean up temp file
+            fs.unlinkSync(tempFilePath);
+
+            return uploadResponse.data;
+        } else {
+            throw new Error('Invalid video string');
+        }
+    } catch (error) {
+        console.error('Error uploading video to YouTube:', error);
+        throw error;
     }
-);
+};
 
 const getYoutubeChannelDetails = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
@@ -454,6 +461,6 @@ const getYoutubeChannelDetails = asyncHandler(
 export {
     youtubeAuth,
     youtubeCallback,
-    uploadVideoToYoutube,
     getYoutubeChannelDetails,
+    uploadVideoToYouTubeHelper,
 };

@@ -12,6 +12,14 @@ import { useDropzone } from 'react-dropzone';
 import { CloudUpload } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export default function UploadVideoDialog({
     environment,
@@ -89,6 +97,53 @@ export default function UploadVideoDialog({
                             className="border border-gray-300"
                             rows={3}
                         />
+                    </div>
+
+                    {/* Category Dropdown */}
+                    <div className="mt-4">
+                        <label className="text-sm font-medium">Category</label>
+                        <Select>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
+                            <SelectContent className="border border-gray-300">
+                                <SelectItem value="education">
+                                    Education
+                                </SelectItem>
+                                <SelectItem value="entertainment">
+                                    Entertainment
+                                </SelectItem>
+                                <SelectItem value="technology">
+                                    Technology
+                                </SelectItem>
+                                <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* Visibility Radio Buttons */}
+                    <div className="mt-4">
+                        <label className="text-sm font-medium">
+                            Visibility
+                        </label>
+                        <RadioGroup
+                            value={visibility}
+                            onValueChange={setVisibility}
+                            className="flex space-x-4 mt-2"
+                        >
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="public" id="public" />
+                                <label htmlFor="public" className="text-sm">
+                                    Public
+                                </label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="private" id="private" />
+                                <label htmlFor="private" className="text-sm">
+                                    Private
+                                </label>
+                            </div>
+                        </RadioGroup>
                     </div>
 
                     <div className="pt-4">

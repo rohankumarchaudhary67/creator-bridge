@@ -59,6 +59,7 @@ model YouTubeVideo {
   title           String?
   description     String?
   category        String?
+  tags            String[]   @default([])
   visibility      String?
   status          VideoStatus?
   creatorResponse String?
@@ -104,7 +105,7 @@ model VideoRequest {
   reciever   YouTubeCreator @relation(fields: [recieverId], references: [id], name: "VideoRequest")
   videoId    String
   video      YouTubeVideo   @relation(fields: [videoId], references: [id], name: "VideoRequest")
-  requestId  String
+  requestId  String         @unique
   status     VideoStatus
   createdAt  DateTime       @default(now())
   updatedAt  DateTime       @updatedAt
