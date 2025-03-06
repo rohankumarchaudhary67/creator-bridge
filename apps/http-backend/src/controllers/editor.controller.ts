@@ -228,9 +228,64 @@ const fetchYouTubeEnvironment = asyncHandler(
     }
 );
 
+const fetchRequestedVideos = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+        const { id } = req.body;
+
+        try {
+            const editor = await prisma.youTubeEditor.findFirst({
+                where: { ownerId: id },
+            });
+            if (!editor) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Editor not found'));
+            }
+
+            const requestedVideos = await prisma.youTubeVideo.findMany({
+                where: {
+                    editorId: editor.id,
+                },
+                select: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    category: true,
+                    visibility: true,
+                    tags: true,
+                    status: true,
+                    createdAt: true,
+                },
+            });
+
+            if (!requestedVideos) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Requested videos not found'));
+            }
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        requestedVideos,
+                        'Requested videos fetched successfully'
+                    )
+                );
+        } catch (error) {
+            console.error('Error fetching requested videos:', error);
+            return res
+                .status(500)
+                .json(new ApiError(500, 'Internal server error'));
+        }
+    }
+);
+
 export {
     fetchEditor,
     handleCreatorRequest,
     fetchEditorRequests,
     fetchYouTubeEnvironment,
+    fetchRequestedVideos,
 };

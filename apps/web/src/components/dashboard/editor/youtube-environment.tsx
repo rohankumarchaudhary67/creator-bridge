@@ -11,14 +11,6 @@ import {
 } from '@/components/ui/table';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { FaUpload } from 'react-icons/fa6';
-import { Dialog, DialogHeader } from '@/components/ui/dialog';
-import {
-    DialogContent,
-    DialogTitle,
-    DialogTrigger,
-} from '@radix-ui/react-dialog';
 import UploadVideoDialog from './upload-video-dialog';
 
 interface YoutubeEnvironmentProps {
@@ -56,7 +48,6 @@ export default function YoutubeEnvironmentComponent({
                 },
             }
         );
-        console.log(response.data.data);
         setYouTubeEnvironments(response.data.data);
     };
 
@@ -125,6 +116,7 @@ export default function YoutubeEnvironmentComponent({
                                             <TableCell className="flex justify-end items-center">
                                                 <UploadVideoDialog
                                                     environment={environment}
+                                                    accessToken={accessToken}
                                                 />
                                             </TableCell>
                                         </TableRow>

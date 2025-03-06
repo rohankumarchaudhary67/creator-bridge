@@ -5,6 +5,7 @@ import {
     sendRequestToAddEditor,
     fetchEditorRequests,
     handleVideoRequest,
+    fetchRequestVideos,
 } from '../controllers/creator.controller';
 
 const creatorRoutes: Router = Router();
@@ -24,6 +25,11 @@ creatorRoutes.post(
     '/handleVideoRequest',
     verifySessionToken,
     handleVideoRequest
+);
+creatorRoutes.get(
+    '/fetchRequestVideos',
+    verifySessionToken,
+    fetchRequestVideos
 );
 
 export { creatorRoutes };

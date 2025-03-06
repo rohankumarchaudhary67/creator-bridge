@@ -15,7 +15,7 @@ const generateRequestId = () => uuidv4();
 
 const uploadVideo = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
-        const { id, title, description, category, visibility } = req.body;
+        const { id, title, description, category, visibility, tags } = req.body;
 
         if (!title || !description || !id) {
             return res
@@ -68,6 +68,7 @@ const uploadVideo = asyncHandler(
                     description,
                     category,
                     visibility,
+                    tags,
                     status: 'Pending',
                 },
             });

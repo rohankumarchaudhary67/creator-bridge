@@ -304,12 +304,82 @@ const handleVideoRequest = asyncHandler(
     }
 );
 
+const fetchRequestVideos = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+        const { id } = req.body;
+
+        try {
+            const creator = await prisma.youTubeCreator.findFirst({
+                where: { ownerId: id },
+            });
+
+            if (!creator) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Creator not found'));
+            }
+
+            // Fetch all video requests with related video details
+            const videos = await prisma.videoRequest.findMany({
+                where: {
+                    recieverId: creator.id,
+                },
+                select: {
+                    videoId: true,
+                    status: true,
+                    video: {
+                        select: {
+                            title: true,
+                            description: true,
+                            category: true,
+                            tags: true,
+                            visibility: true,
+                            videoString: true,
+                            createdAt: true,
+                        },
+                    }, // Fetch related video details
+                    sender: {
+                        select: {
+                            owner: {
+                                select: {
+                                    name: true,
+                                    email: true,
+                                    image: true,
+                                },
+                            },
+                        },
+                    }, // Fetch related sender details
+                },
+            });
+
+            if (!videos.length) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Request videos not found'));
+            }
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        videos,
+                        'Request videos fetched successfully'
+                    )
+                );
+        } catch (error) {
+            console.error('Error fetching request videos:', error);
+            return res
+                .status(500)
+                .json(new ApiError(500, 'Internal server error'));
+        }
+    }
+);
+
 export {
     fetchCreator,
     sendRequestToAddEditor,
     fetchEditorRequests,
     handleVideoRequest,
+    fetchRequestVideos,
 };
-function streamPipeline(data: any, tempFile: fs.WriteStream) {
-    throw new Error('Function not implemented.');
-}

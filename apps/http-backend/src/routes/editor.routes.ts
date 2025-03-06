@@ -5,6 +5,7 @@ import {
     handleCreatorRequest,
     fetchEditorRequests,
     fetchYouTubeEnvironment,
+    fetchRequestedVideos,
 } from '../controllers/editor.controller';
 
 const editorRoutes: Router = Router();
@@ -24,6 +25,11 @@ editorRoutes.get(
     '/fetchYouTubeEnvironment',
     verifySessionToken,
     fetchYouTubeEnvironment
+);
+editorRoutes.get(
+    '/fetchRequestedVideos',
+    verifySessionToken,
+    fetchRequestedVideos
 );
 
 export { editorRoutes };

@@ -1,3 +1,4 @@
+'use client';
 import {
     Table,
     TableBody,
@@ -6,132 +7,258 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 import { TiTick } from 'react-icons/ti';
-import { ImCross } from 'react-icons/im';
+import { GiCrossedBones } from 'react-icons/gi';
+import { MdPreview } from 'react-icons/md';
 
 interface VideoData {
-    id: string;
-    thumbnail: string;
-    title: string;
-    category: string;
-    duration: string;
-    uploadedBy: {
-        name: string;
-        email: string;
+    videoId: string;
+    status: string;
+    video: {
+        title: string;
+        description: string;
+        category: string;
+        tags: string[];
+        visibility: string;
+        videoString: string;
+        createdAt: string;
     };
-    timeAgo: string;
+    sender: {
+        owner: {
+            name: string;
+            email: string;
+            image: string;
+        };
+    };
 }
 
-interface DataProps {
-    data: VideoData[];
-}
+export default function ApprovalVideoDataComponent({
+    accessToken,
+}: {
+    accessToken: string;
+}) {
+    const [data, setData] = useState<VideoData[]>([]);
 
-export default function ApprovalVideoDataComponent({ data }: DataProps) {
+    useEffect(() => {
+        fetchData();
+    }, [accessToken]);
+
+    const fetchData = async () => {
+        const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/creator/fetchRequestVideos`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            }
+        );
+        setData(response.data.data);
+    };
+
+    const handleVideoRequest = async (videoId: string, status: string) => {
+        try {
+            const response = await axios.post(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/creator/handleVideoRequest`,
+                {
+                    id: videoId,
+                    status,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error handling video request:', error);
+        }
+    };
+
     return (
-        <div className="py-4">
-            <h1 className="font-sans font-semibold md:text-xl p-2">
-                Video Approval Request
+        <div className="pt-4">
+            <h1 className="font-sans font-semibold md:text-xl pt-2">
+                Recent Approval Request
             </h1>
-            <div className="bg-muted rounded-lg px-6 py-4">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>
-                                <Checkbox />
-                            </TableHead>
-                            <TableHead>VIDEO</TableHead>
-                            <TableHead>UPLOADED BY</TableHead>
-                            <TableHead>CATEGORY</TableHead>
-                            <TableHead>DURATION</TableHead>
-                            <TableHead>UPLOADED</TableHead>
-                            <TableHead className="text-right">
-                                ACTIONS
-                            </TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {data.map((video) => (
-                            <TableRow
-                                key={video.id}
-                                className="border-b border-background"
-                            >
-                                {/* Checkbox */}
-                                <TableCell>
-                                    <Checkbox />
-                                </TableCell>
-
-                                {/* Video Thumbnail & Title */}
-                                <TableCell className="font-medium">
+            <div className="rounded-lg py-4">
+                <Accordion
+                    type="single"
+                    className="flex flex-col space-y-4"
+                    collapsible
+                >
+                    {data.map((video, index) => (
+                        <AccordionItem
+                            key={index}
+                            value={video.videoId}
+                            className="border-b border-background bg-muted px-4 rounded-lg"
+                        >
+                            <AccordionTrigger>
+                                <div className="flex items-center justify-between w-full pr-6">
                                     <div className="flex items-center space-x-4">
                                         <div className="relative w-[120px] h-[68px]">
                                             <Image
-                                                src={video.thumbnail}
+                                                src="/thumbnail.png"
                                                 alt="thumbnail"
                                                 fill
                                                 className="rounded-lg object-cover"
                                             />
                                         </div>
                                         <div className="flex flex-col">
-                                            <h1 className="text-sm font-medium">
-                                                {video.title}
+                                            <h1 className="text-wrap font-sans text-lg">
+                                                {video.video.title}
                                             </h1>
-                                            <p className="text-xs text-gray-500">
-                                                ID: {video.id}
+                                            <p className="text-gray-500 text-sm">
+                                                {video.video.visibility}
                                             </p>
                                         </div>
                                     </div>
-                                </TableCell>
-
-                                {/* Uploaded By */}
-                                <TableCell>
-                                    <div className="flex items-center space-x-2">
-                                        <div>
-                                            <h2 className="text-sm">
-                                                {video.uploadedBy.name}
-                                            </h2>
-                                            <p className="text-xs text-gray-500">
-                                                {video.uploadedBy.email}
-                                            </p>
-                                        </div>
+                                    <p
+                                        className={`${video.status === 'Pending' && 'dark:text-[#cccc00]'} ${video.status === 'Approved' && 'dark:text-[#33cc00]'} ${video.status === 'Rejected' && 'dark:text-[#cc0000]'} text-lg`}
+                                    >
+                                        {video.status}
+                                    </p>
+                                </div>
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <div className="px-4 py-2">
+                                    <div className="flex justify-start items-center space-x-2">
+                                        <p className="text-lg font-sans font-semibold">
+                                            Description:
+                                        </p>
+                                        <p className="text-wrap text-lg text-gray-400">
+                                            {video.video.description}
+                                        </p>
                                     </div>
-                                </TableCell>
+                                    <div className="flex justify-start items-center space-x-2">
+                                        <p className="text-lg font-sans font-semibold">
+                                            Tags:
+                                        </p>
+                                        {video.video.tags.map((tag, index) => (
+                                            <p
+                                                key={index}
+                                                className="text-lg text-gray-400"
+                                            >
+                                                {tag}
+                                            </p>
+                                        ))}
+                                    </div>
 
-                                {/* Category */}
-                                <TableCell>
-                                    <Badge variant="outline">
-                                        {video.category}
-                                    </Badge>
-                                </TableCell>
+                                    <div className="flex items-center space-x-2 py-2">
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead>
+                                                        UPLOAD BY
+                                                    </TableHead>
+                                                    <TableHead>
+                                                        CATEGORY
+                                                    </TableHead>
+                                                    <TableHead>
+                                                        VISIBILTY
+                                                    </TableHead>
+                                                    <TableHead className="text-end">
+                                                        UPLOAD DATE
+                                                    </TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                <TableRow>
+                                                    <TableCell className="font-medium">
+                                                        <div className="flex items-center space-x-2">
+                                                            <Image
+                                                                src={
+                                                                    video.sender
+                                                                        .owner
+                                                                        .image
+                                                                }
+                                                                alt="thumbnail"
+                                                                width={35}
+                                                                height={35}
+                                                                className="rounded-full"
+                                                            />
+                                                            <div>
+                                                                <h2 className="text-sm">
+                                                                    {
+                                                                        video
+                                                                            .sender
+                                                                            .owner
+                                                                            .name
+                                                                    }
+                                                                </h2>
+                                                                <p className="text-xs text-gray-500">
+                                                                    {
+                                                                        video
+                                                                            .sender
+                                                                            .owner
+                                                                            .email
+                                                                    }
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {video.video.category}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        {video.video.visibility}
+                                                    </TableCell>
+                                                    <TableCell className="text-end">
+                                                        {video.video.createdAt}
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </div>
 
-                                {/* Duration */}
-                                <TableCell>{video.duration}</TableCell>
-
-                                {/* Time Ago */}
-                                <TableCell className="text-gray-500 text-sm">
-                                    {video.timeAgo}
-                                </TableCell>
-
-                                {/* Actions */}
-                                <TableCell className="flex justify-around items-center pt-8 space-x-2">
-                                    <h1 className="cursor-pointer text-yellow-600">
-                                        Preview
-                                    </h1>
-                                    <h1 className="text-red-500 cursor-pointer">
-                                        Reject
-                                    </h1>
-                                    <h1 className="text-[#29a329] cursor-pointer">
-                                        Approve
-                                    </h1>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                                    <div className="flex justify-end items-center space-x-4 pt-2 pr-2">
+                                        <Button variant={'preview'}>
+                                            Preview <MdPreview />
+                                        </Button>
+                                        <Button variant={'reject'}>
+                                            Reject <GiCrossedBones />
+                                        </Button>
+                                        <Button variant={'approve'}>
+                                            Approve <TiTick />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
             </div>
         </div>
     );
 }
+
+const categoryMap: Record<string, string> = {
+    '22': 'People & Blogs',
+    '23': 'Comedy',
+    '10': 'Music',
+    '1': 'Film & Animation',
+    '2': 'Autos & Vehicle',
+    '15': 'Pets & Animals',
+    '17': 'Sports',
+    '18': 'Short Movies',
+    '19': 'Travel & Events',
+    '20': 'Gaming',
+    '21': 'Videoblogging',
+    '24': 'Entertainment',
+    '25': 'News & Politics',
+    '26': 'Howto & Style',
+    '27': 'Education',
+    '28': 'Science & Technology',
+    '29': 'Nonprofits & Activism',
+    '30': 'Movies',
+};

@@ -13,7 +13,9 @@ import { LuClock4 } from 'react-icons/lu';
 import YoutubeIntegrationDashboardComponent from './youtube-integration';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import YouTubeChannelDetailsComponent from './youtube-channel';
+import { IoArrowForward } from 'react-icons/io5';
 
 interface CreatorData {
     pendingVideos: number;
@@ -46,32 +48,6 @@ export default function CreatorDashboardComponent({
         fetchCreatorData();
     }, [accessToken]);
 
-    const data = [
-        {
-            id: '123456789',
-            thumbnail: '/test-thumbnail.jpeg',
-            title: 'The Great Wall of China',
-            category: 'Technology',
-            duration: '2:30 mins',
-            uploadedBy: {
-                name: 'Rohan Chaudhary',
-                email: 'rohan@creator.xyz',
-            },
-            timeAgo: '2025-02-20',
-        },
-        {
-            id: '12345679',
-            thumbnail: '/test-thumbnail.jpeg',
-            title: 'The Great wall of china',
-            category: 'Technology',
-            duration: '2:30 mins',
-            uploadedBy: {
-                name: 'Rohan Chaudhary',
-                email: 'rohan@creator.xyz',
-            },
-            timeAgo: '2025-02-20',
-        },
-    ];
     return (
         <>
             <div className="flex flex-col space-y-2">
@@ -145,7 +121,17 @@ export default function CreatorDashboardComponent({
 
                 {creatorData?.connectionStatus && (
                     <>
-                        <ApprovalVideoDataComponent data={data} />
+                        <ApprovalVideoDataComponent
+                            accessToken={accessToken as string}
+                        />
+                        <div className="flex justify-end pb-6">
+                            <Button
+                                className="font-bold hover:underline font-sans tracking-wide hover:dark:bg-black"
+                                variant={'ghost'}
+                            >
+                                View all <IoArrowForward />
+                            </Button>
+                        </div>
                         <YouTubeChannelDetailsComponent
                             accessToken={accessToken}
                         />

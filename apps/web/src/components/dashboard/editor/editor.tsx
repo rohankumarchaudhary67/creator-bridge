@@ -112,7 +112,9 @@ export default function EditorDashboardComponent({
                     accessToken={accessToken as string}
                 />
 
-                {/* <EditorRequestVideosDashboardComponent /> */}
+                <EditorRequestVideosDashboardComponent
+                    accessToken={accessToken as string}
+                />
             </div>
         </>
     );
