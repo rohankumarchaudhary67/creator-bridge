@@ -5,10 +5,6 @@ import prisma from '@repo/db';
 import { ApiError } from '../utils/api-error';
 import { v4 as uuidv4 } from 'uuid';
 import { sendJoinRequestEmail } from '../emails/send-request';
-import axios from 'axios';
-import { deleteOnCloudinary } from '../lib/cloudinary';
-import fs from 'fs';
-import { uploadVideoToYouTubeHelper } from './youtube.controller';
 
 const generateRequestId = () => uuidv4();
 
@@ -225,110 +221,6 @@ const fetchEditorRequests = asyncHandler(
     }
 );
 
-const handleVideoRequest = asyncHandler(
-    async (req: Request, res: Response): Promise<any> => {
-        const { id, requestId, status } = req.body;
-
-        try {
-            const youtubeCreator = await prisma.youTubeCreator.findFirst({
-                where: { ownerId: id },
-            });
-            if (!youtubeCreator) {
-                return res
-                    .status(404)
-                    .json(new ApiError(404, 'YouTube creator not found'));
-            }
-
-            const videoRequest = await prisma.videoRequest.findFirst({
-                where: {
-                    requestId,
-                },
-            });
-
-            if (!videoRequest) {
-                return res
-                    .status(404)
-                    .json(new ApiError(404, 'Video request not found'));
-            }
-
-            if (videoRequest.status !== 'Pending') {
-                return res
-                    .status(400)
-                    .json(new ApiError(400, 'Video request is not pending'));
-            }
-
-            const video = await prisma.youTubeVideo.findFirst({
-                where: {
-                    id: videoRequest.videoId,
-                },
-            });
-
-            if (status === 'Approved') {
-                // Call YouTube upload API
-                const uploadResponse = await uploadVideoToYouTubeHelper(
-                    youtubeCreator.id,
-                    video?.id as string
-                );
-
-                // Update video request status in database
-                await prisma.videoRequest.update({
-                    where: { requestId },
-                    data: { status: 'Approved' },
-                });
-
-                await prisma.youTubeVideo.update({
-                    where: { id: video?.id },
-                    data: { status: 'Approved' },
-                });
-
-                await deleteOnCloudinary(video?.videoString!);
-
-                return res
-                    .status(200)
-                    .json(
-                        new ApiResponse(
-                            200,
-                            uploadResponse,
-                            'Video approved and uploaded to YouTube'
-                        )
-                    );
-            }
-
-            if (status === 'Rejected') {
-                const deleteVideo = await deleteOnCloudinary(
-                    video?.videoString!
-                );
-                await prisma.videoRequest.update({
-                    where: { requestId },
-                    data: { status: 'Rejected' },
-                });
-                await prisma.youTubeVideo.update({
-                    where: { id: video?.id },
-                    data: {
-                        status: 'Rejected',
-                        videoString: null,
-                    },
-                });
-                return res
-                    .status(200)
-                    .json(
-                        new ApiResponse(
-                            200,
-                            'Video request rejected successfully'
-                        )
-                    );
-            }
-
-            return res.status(400).json(new ApiError(400, 'Invalid status'));
-        } catch (error) {
-            console.error('Error accepting video request:', error);
-            return res
-                .status(500)
-                .json(new ApiError(500, 'Internal server error'));
-        }
-    }
-);
-
 const fetchRequestVideos = asyncHandler(
     async (req: Request, res: Response): Promise<any> => {
         const { id } = req.body;
@@ -350,6 +242,7 @@ const fetchRequestVideos = asyncHandler(
                     recieverId: creator.id,
                 },
                 select: {
+                    id: true,
                     videoId: true,
                     status: true,
                     video: {
@@ -406,6 +299,5 @@ export {
     fetchCreator,
     sendRequestToAddEditor,
     fetchEditorRequests,
-    handleVideoRequest,
     fetchRequestVideos,
 };

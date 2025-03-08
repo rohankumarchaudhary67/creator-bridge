@@ -39,20 +39,18 @@ const fetchEditor = asyncHandler(
                 where: { editorId: editor.id, status: 'Pending' },
             });
 
-            return res
-                .status(200)
-                .json(
-                    new ApiResponse(
-                        200,
-                        {
-                            totalVideos,
-                            approvedVideos,
-                            rejectedVideos,
-                            pendingVideos,
-                        },
-                        'Editor fetched successfully'
-                    )
-                );
+            return res.status(200).json(
+                new ApiResponse(
+                    200,
+                    {
+                        totalVideos,
+                        approvedVideos,
+                        rejectedVideos,
+                        pendingVideos,
+                    },
+                    'Editor fetched successfully'
+                )
+            );
         } catch (error) {
             console.error('Error fetching editor data:', error);
             return res

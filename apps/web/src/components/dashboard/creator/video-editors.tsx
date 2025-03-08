@@ -45,7 +45,6 @@ export default function VideoEditorsComponent({
                     },
                 }
             );
-            console.log(response.data);
             setIsDialogOpen(false);
             if (response.data.message === 'Request already sent') {
                 toast.warning('Request already sent!', { id: toastId });

@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import YouTubeChannelDetailsComponent from './youtube-channel';
 import { IoArrowForward } from 'react-icons/io5';
+import PreviewVideoComponent from './preview';
 
 interface CreatorData {
     pendingVideos: number;

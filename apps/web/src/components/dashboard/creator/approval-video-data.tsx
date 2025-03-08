@@ -23,6 +23,8 @@ import { MdPreview } from 'react-icons/md';
 import { ApprovalVideoData } from '@/types/video';
 import { formatTimestamp } from '@/func/func';
 import { categoryMap } from '@/func/video-category';
+import PreviewVideoComponent from './preview';
+import HandleVideoRequestComponent from './handle-video-request';
 
 export default function ApprovalVideoDataComponent({
     accessToken,
@@ -41,26 +43,6 @@ export default function ApprovalVideoDataComponent({
             }
         );
         setData(response.data.data);
-    };
-
-    const handleVideoRequest = async (videoId: string, status: string) => {
-        try {
-            const response = await axios.post(
-                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/creator/handleVideoRequest`,
-                {
-                    id: videoId,
-                    status,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                }
-            );
-            console.log(response.data);
-        } catch (error) {
-            console.error('Error handling video request:', error);
-        }
     };
 
     useEffect(() => {
@@ -212,15 +194,14 @@ export default function ApprovalVideoDataComponent({
                                     </div>
 
                                     <div className="flex justify-end items-center space-x-4 pt-2 pr-2">
-                                        <Button variant={'preview'}>
-                                            Preview <MdPreview />
-                                        </Button>
-                                        <Button variant={'reject'}>
-                                            Reject <GiCrossedBones />
-                                        </Button>
-                                        <Button variant={'approve'}>
-                                            Approve <TiTick />
-                                        </Button>
+                                        <PreviewVideoComponent
+                                            video={video}
+                                            accessToken={accessToken}
+                                        />
+                                        <HandleVideoRequestComponent
+                                            video={video}
+                                            accessToken={accessToken}
+                                        />
                                     </div>
                                 </div>
                             </AccordionContent>

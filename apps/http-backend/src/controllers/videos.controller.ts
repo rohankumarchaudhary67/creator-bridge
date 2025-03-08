@@ -6,6 +6,8 @@ import { ApiError } from '../utils/api-error';
 import { ApiResponse } from '../utils/api-response';
 import { v4 as uuidv4 } from 'uuid';
 import { sendVideoUploadRequestEmail } from '../emails/send-request';
+import { deleteOnCloudinary } from '../lib/cloudinary';
+import { uploadVideoToYouTubeHelper } from './youtube.controller';
 
 interface MulterFiles {
     video?: Express.Multer.File[];
@@ -148,4 +150,127 @@ const uploadVideo = asyncHandler(
     }
 );
 
-export { uploadVideo };
+const handleVideoRequest = asyncHandler(
+    async (req: Request, res: Response): Promise<any> => {
+        const { id, requestId, status } = req.body;
+
+        try {
+            console.log('Request Body:', req.body); // Debugging
+
+            // Find YouTube Creator by ownerId
+            const youtubeCreator = await prisma.youTubeCreator.findUnique({
+                where: { ownerId: id },
+            });
+
+            if (!youtubeCreator) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'YouTube creator not found'));
+            }
+
+            // Find the Video Request using requestId
+            const videoRequest = await prisma.videoRequest.findUnique({
+                where: { requestId },
+            });
+
+            if (!videoRequest) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Video request not found'));
+            }
+
+            if (videoRequest.status !== 'Pending') {
+                return res
+                    .status(400)
+                    .json(new ApiError(400, 'Video request is not pending'));
+            }
+
+            // Fetch the associated video
+            const video = await prisma.youTubeVideo.findUnique({
+                where: { id: videoRequest.videoId },
+            });
+
+            if (!video) {
+                return res
+                    .status(404)
+                    .json(new ApiError(404, 'Associated video not found'));
+            }
+
+            if (status === 'Approved') {
+                // Call YouTube upload API
+                const uploadResponse = await uploadVideoToYouTubeHelper(
+                    youtubeCreator.id,
+                    video.id
+                );
+
+                // Update video request status to Approved
+                await prisma.videoRequest.update({
+                    where: { requestId },
+                    data: { status: 'Approved' },
+                });
+
+                // Update YouTube video status to Approved
+                await prisma.youTubeVideo.update({
+                    where: { id: video.id },
+                    data: { status: 'Approved' },
+                });
+
+                // Delete video from Cloudinary if it was uploaded successfully
+                if (video.videoString) {
+                    await deleteOnCloudinary(video.videoString);
+                }
+
+                return res
+                    .status(200)
+                    .json(
+                        new ApiResponse(
+                            200,
+                            uploadResponse,
+                            'Video approved and uploaded to YouTube'
+                        )
+                    );
+            }
+
+            if (status === 'Rejected') {
+                // Delete video from Cloudinary if it exists
+                if (video.videoString) {
+                    await deleteOnCloudinary(video.videoString);
+                }
+
+                // Update video request status to Rejected
+                await prisma.videoRequest.update({
+                    where: { requestId },
+                    data: { status: 'Rejected' },
+                });
+
+                // Update YouTube video status to Rejected and remove videoString
+                await prisma.youTubeVideo.update({
+                    where: { id: video.id },
+                    data: {
+                        status: 'Rejected',
+                        videoString: null,
+                    },
+                });
+
+                return res
+                    .status(200)
+                    .json(
+                        new ApiResponse(
+                            200,
+                            null,
+                            'Video request rejected successfully'
+                        )
+                    );
+            }
+
+            return res.status(400).json(new ApiError(400, 'Invalid status'));
+        } catch (error) {
+            console.error('Error handling video request:', error);
+            return res
+                .status(500)
+                .json(new ApiError(500, 'Internal server error'));
+        }
+    }
+);
+
+export { uploadVideo, handleVideoRequest };

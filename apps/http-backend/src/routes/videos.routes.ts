@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { uploadVideo } from '../controllers/videos.controller';
+import {
+    handleVideoRequest,
+    uploadVideo,
+} from '../controllers/videos.controller';
 import { upload } from '../middlewares/multer';
 import { verifySessionToken } from '../middlewares/auth';
 
@@ -13,5 +16,7 @@ videoRoutes.route('/upload').post(
     verifySessionToken,
     uploadVideo
 );
+
+videoRoutes.post('/handleVideoRequest', verifySessionToken, handleVideoRequest);
 
 export { videoRoutes };

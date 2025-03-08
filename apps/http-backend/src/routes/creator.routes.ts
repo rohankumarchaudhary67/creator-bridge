@@ -4,7 +4,6 @@ import {
     fetchCreator,
     sendRequestToAddEditor,
     fetchEditorRequests,
-    handleVideoRequest,
     fetchRequestVideos,
 } from '../controllers/creator.controller';
 
@@ -20,11 +19,6 @@ creatorRoutes.get(
     '/fetchEditorRequests',
     verifySessionToken,
     fetchEditorRequests
-);
-creatorRoutes.post(
-    '/handleVideoRequest',
-    verifySessionToken,
-    handleVideoRequest
 );
 creatorRoutes.get(
     '/fetchRequestVideos',

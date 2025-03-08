@@ -199,6 +199,13 @@ const uploadVideoToYouTubeHelper = async (id: string, videoId: string) => {
             where: { id: videoId },
         });
 
+        console.log('Uploading video with metadata:', {
+            title: youtubeVideo?.title,
+            description: youtubeVideo?.description,
+            category: youtubeVideo?.category,
+            tags: youtubeVideo?.tags,
+        });
+
         if (!youtubeVideo) {
             throw new Error('YouTube video not found');
         }
@@ -281,13 +288,16 @@ const uploadVideoToYouTubeHelper = async (id: string, videoId: string) => {
                 part: ['snippet', 'status'],
                 requestBody: {
                     snippet: {
-                        title: youtubeVideo.title,
-                        description: youtubeVideo.description,
-                        categoryId: youtubeVideo.category,
-                        tags: youtubeVideo.tags,
+                        title:
+                            youtubeVideo.title?.toString() || 'Untitled Video', // ✅ Default value
+                        description:
+                            youtubeVideo.description ||
+                            'No description provided.',
+                        categoryId: youtubeVideo.category || '22', // Default to 'Entertainment' if missing
+                        tags: youtubeVideo.tags || [],
                     },
                     status: {
-                        privacyStatus: 'private',
+                        privacyStatus: youtubeVideo.visibility,
                     },
                 },
                 media: {
