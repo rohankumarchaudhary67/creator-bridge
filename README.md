@@ -15,8 +15,13 @@
 
 ## Screenshots
 
+Screenshot 1
 ![Screenshot 2025-03-08 at 6 55 23 PM](https://github.com/user-attachments/assets/56f35a8b-d6b3-4c74-94bb-dcfa2cedb3f3)
+
+Screenshot 2
 ![Screenshot 2025-03-08 at 6 55 49 PM](https://github.com/user-attachments/assets/7f9fc060-fab2-41d7-bd86-0cd03b3102ae)
+
+Screenshot 3
 ![Screenshot 2025-03-08 at 6 56 12 PM](https://github.com/user-attachments/assets/21d3f6c0-1e6f-4e83-8850-8d6142d8f091)
 
 ## Tech Stack
