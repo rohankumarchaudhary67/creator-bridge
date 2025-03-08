@@ -15,9 +15,9 @@
 
 ## Screenshots
 
-![Screenshot 2025-02-18 at 7 15 44 PM](https://github.com/user-attachments/assets/71eff1f4-c024-4c95-9d59-7ec687b4ff58)
-![Screenshot 2025-02-18 at 7 16 18 PM](https://github.com/user-attachments/assets/09e3557d-e645-4fdb-a4ce-10fdbfea85f9)
-![Screenshot 2025-02-18 at 7 16 11 PM](https://github.com/user-attachments/assets/21ff0f94-5dc7-41a3-829a-057a294f3ac4)
+![Screenshot 2025-03-08 at 6 55 23 PM](https://github.com/user-attachments/assets/56f35a8b-d6b3-4c74-94bb-dcfa2cedb3f3)
+![Screenshot 2025-03-08 at 6 55 49 PM](https://github.com/user-attachments/assets/7f9fc060-fab2-41d7-bd86-0cd03b3102ae)
+![Screenshot 2025-03-08 at 6 56 12 PM](https://github.com/user-attachments/assets/21d3f6c0-1e6f-4e83-8850-8d6142d8f091)
 
 ## Tech Stack
 
