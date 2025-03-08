@@ -12,22 +12,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import UploadVideoDialog from './upload-video-dialog';
-
-interface YoutubeEnvironmentProps {
-    youtubeChannel: {
-        channelId: string;
-        channelTitle: string;
-        channelDescription: string;
-        subscriberCount: number;
-        videoCount: number;
-        thumbnailUrl: string;
-    }[];
-    owner: {
-        name: string;
-        email: string;
-        image: string;
-    };
-}
+import { YoutubeEnvironmentProps } from '@/types/youtube';
 
 export default function YoutubeEnvironmentComponent({
     accessToken,
@@ -37,7 +22,6 @@ export default function YoutubeEnvironmentComponent({
     const [youTubeEnvironments, setYouTubeEnvironments] = useState<
         YoutubeEnvironmentProps[]
     >([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const fetchYoutubeEnvironment = async () => {
         const response = await axios.get(
@@ -57,7 +41,7 @@ export default function YoutubeEnvironmentComponent({
 
     return (
         <>
-            {youTubeEnvironments.length > 0 && (
+            {youTubeEnvironments.length > 0 ? (
                 <div className="pt-4">
                     <h1 className="font-sans font-semibold md:text-xl p-2">
                         YouTube Environments
@@ -93,7 +77,7 @@ export default function YoutubeEnvironmentComponent({
                                                         className="rounded-full"
                                                     />
                                                     <div>
-                                                        <h1 className="font-sans font-semibold text-md">
+                                                        <h1 className="font-mono font-semibold text-md">
                                                             {environment
                                                                 .youtubeChannel
                                                                 ?.length &&
@@ -101,7 +85,7 @@ export default function YoutubeEnvironmentComponent({
                                                                     .youtubeChannel[0]
                                                                     .channelTitle}
                                                         </h1>
-                                                        <p>
+                                                        <p className="font-mono text-sm">
                                                             {environment
                                                                 .youtubeChannel
                                                                 ?.length &&
@@ -124,6 +108,17 @@ export default function YoutubeEnvironmentComponent({
                                 )}
                             </TableBody>
                         </Table>
+                    </div>
+                </div>
+            ) : (
+                <div>
+                    <h1 className="font-sans font-semibold md:text-xl p-2">
+                        YouTube Environments
+                    </h1>
+                    <div className="bg-muted rounded-lg px-6 py-4">
+                        <p className="text-center text-primary font-bold text-xl mt-2">
+                            No YouTube Environments Found
+                        </p>
                     </div>
                 </div>
             )}

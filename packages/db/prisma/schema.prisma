@@ -26,9 +26,6 @@ model YouTubeCreator {
   owner            User               @relation(fields: [ownerId], references: [id])
   youtubeChannel   YoutubeChannel[]
   userYoutubeToken UserYoutubeToken[]
-  approvedVideos   Int                @default(0)
-  rejectedVideos   Int                @default(0)
-  pendingVideos    Int                @default(0)
   editors          YouTubeEditor[]    @relation("Editor")
   videoRequests    VideoRequest[]     @relation("VideoRequest")
   joinRequest      JoinRequest[]      @relation("Sender")
@@ -42,10 +39,6 @@ model YouTubeEditor {
   owner               User             @relation(fields: [ownerId], references: [id])
   youtuberEnvironment YouTubeCreator[] @relation("Editor")
   video               YouTubeVideo[]   @relation("VideoEditor")
-  totalVideos         Int              @default(0)
-  approvedVideos      Int              @default(0)
-  rejectedVideos      Int              @default(0)
-  pendingVideos       Int              @default(0)
   videoRequests       VideoRequest[]   @relation("VideoRequest")
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
@@ -58,6 +51,7 @@ model YouTubeVideo {
   videoString     String?
   title           String?
   description     String?
+  thumbnailString String?
   category        String?
   tags            String[]   @default([])
   visibility      String?

@@ -8,7 +8,6 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import {
@@ -21,38 +20,16 @@ import { Button } from '@/components/ui/button';
 import { TiTick } from 'react-icons/ti';
 import { GiCrossedBones } from 'react-icons/gi';
 import { MdPreview } from 'react-icons/md';
-
-interface VideoData {
-    videoId: string;
-    status: string;
-    video: {
-        title: string;
-        description: string;
-        category: string;
-        tags: string[];
-        visibility: string;
-        videoString: string;
-        createdAt: string;
-    };
-    sender: {
-        owner: {
-            name: string;
-            email: string;
-            image: string;
-        };
-    };
-}
+import { ApprovalVideoData } from '@/types/video';
+import { formatTimestamp } from '@/func/func';
+import { categoryMap } from '@/func/video-category';
 
 export default function ApprovalVideoDataComponent({
     accessToken,
 }: {
     accessToken: string;
 }) {
-    const [data, setData] = useState<VideoData[]>([]);
-
-    useEffect(() => {
-        fetchData();
-    }, [accessToken]);
+    const [data, setData] = useState<ApprovalVideoData[]>([]);
 
     const fetchData = async () => {
         const response = await axios.get(
@@ -86,6 +63,10 @@ export default function ApprovalVideoDataComponent({
         }
     };
 
+    useEffect(() => {
+        fetchData();
+    }, [accessToken]);
+
     return (
         <div className="pt-4">
             <h1 className="font-sans font-semibold md:text-xl pt-2">
@@ -105,26 +86,30 @@ export default function ApprovalVideoDataComponent({
                         >
                             <AccordionTrigger>
                                 <div className="flex items-center justify-between w-full pr-6">
-                                    <div className="flex items-center space-x-4">
+                                    <div className="flex items-start space-x-4">
                                         <div className="relative w-[120px] h-[68px]">
                                             <Image
-                                                src="/thumbnail.png"
+                                                src={
+                                                    video.video
+                                                        .thumbnailString ||
+                                                    '/thumbnail.png'
+                                                }
                                                 alt="thumbnail"
                                                 fill
                                                 className="rounded-lg object-cover"
                                             />
                                         </div>
                                         <div className="flex flex-col">
-                                            <h1 className="text-wrap font-sans text-lg">
+                                            <h1 className="text-wrap font-sans text-lg font-semibold">
                                                 {video.video.title}
                                             </h1>
-                                            <p className="text-gray-500 text-sm">
-                                                {video.video.visibility}
+                                            <p className="text-gray-400 text-sm font-mono">
+                                                {video.video.visibility.toUpperCase()}
                                             </p>
                                         </div>
                                     </div>
                                     <p
-                                        className={`${video.status === 'Pending' && 'dark:text-[#cccc00]'} ${video.status === 'Approved' && 'dark:text-[#33cc00]'} ${video.status === 'Rejected' && 'dark:text-[#cc0000]'} text-lg`}
+                                        className={`${video.status === 'Pending' && 'dark:text-[#cccc00] text-[#ffcc00]'} ${video.status === 'Approved' && 'dark:text-[#33cc00] text-[#33cc00]'} ${video.status === 'Rejected' && 'dark:text-[#cc0000] text-[#cc0000]'} text-lg font-mono`}
                                     >
                                         {video.status}
                                     </p>
@@ -132,24 +117,24 @@ export default function ApprovalVideoDataComponent({
                             </AccordionTrigger>
                             <AccordionContent>
                                 <div className="px-4 py-2">
-                                    <div className="flex justify-start items-center space-x-2">
-                                        <p className="text-lg font-sans font-semibold">
+                                    <div className="flex justify-start items-start space-x-2">
+                                        <p className="font-mono font-semibold">
                                             Description:
                                         </p>
-                                        <p className="text-wrap text-lg text-gray-400">
+                                        <p className="text-wrap text-gray-300 font-extralight text-sm">
                                             {video.video.description}
                                         </p>
                                     </div>
-                                    <div className="flex justify-start items-center space-x-2">
-                                        <p className="text-lg font-sans font-semibold">
+                                    <div className="flex justify-start items-center space-x-2 pt-2">
+                                        <p className="font-mono font-semibold">
                                             Tags:
                                         </p>
                                         {video.video.tags.map((tag, index) => (
                                             <p
                                                 key={index}
-                                                className="text-lg text-gray-400"
+                                                className="font-mono text-gray-400"
                                             >
-                                                {tag}
+                                                {tag} |
                                             </p>
                                         ))}
                                     </div>
@@ -158,16 +143,16 @@ export default function ApprovalVideoDataComponent({
                                         <Table>
                                             <TableHeader>
                                                 <TableRow>
-                                                    <TableHead>
+                                                    <TableHead className="font-mono">
                                                         UPLOAD BY
                                                     </TableHead>
-                                                    <TableHead>
+                                                    <TableHead className="font-mono">
                                                         CATEGORY
                                                     </TableHead>
-                                                    <TableHead>
+                                                    <TableHead className="font-mono">
                                                         VISIBILTY
                                                     </TableHead>
-                                                    <TableHead className="text-end">
+                                                    <TableHead className="text-end font-mono">
                                                         UPLOAD DATE
                                                     </TableHead>
                                                 </TableRow>
@@ -196,7 +181,7 @@ export default function ApprovalVideoDataComponent({
                                                                             .name
                                                                     }
                                                                 </h2>
-                                                                <p className="text-xs text-gray-500">
+                                                                <p className="text-xs text-gray-500 tracking-wide">
                                                                     {
                                                                         video
                                                                             .sender
@@ -207,14 +192,19 @@ export default function ApprovalVideoDataComponent({
                                                             </div>
                                                         </div>
                                                     </TableCell>
-                                                    <TableCell>
-                                                        {video.video.category}
+                                                    <TableCell className="tracking-wide">
+                                                        {categoryMap[
+                                                            video.video.category
+                                                        ].toUpperCase()}
                                                     </TableCell>
-                                                    <TableCell>
-                                                        {video.video.visibility}
+                                                    <TableCell className="tracking-wide">
+                                                        {video.video.visibility.toUpperCase()}
                                                     </TableCell>
-                                                    <TableCell className="text-end">
-                                                        {video.video.createdAt}
+                                                    <TableCell className="text-end font-mono font-semibold">
+                                                        {formatTimestamp(
+                                                            video.video
+                                                                .createdAt
+                                                        )}
                                                     </TableCell>
                                                 </TableRow>
                                             </TableBody>
@@ -241,24 +231,3 @@ export default function ApprovalVideoDataComponent({
         </div>
     );
 }
-
-const categoryMap: Record<string, string> = {
-    '22': 'People & Blogs',
-    '23': 'Comedy',
-    '10': 'Music',
-    '1': 'Film & Animation',
-    '2': 'Autos & Vehicle',
-    '15': 'Pets & Animals',
-    '17': 'Sports',
-    '18': 'Short Movies',
-    '19': 'Travel & Events',
-    '20': 'Gaming',
-    '21': 'Videoblogging',
-    '24': 'Entertainment',
-    '25': 'News & Politics',
-    '26': 'Howto & Style',
-    '27': 'Education',
-    '28': 'Science & Technology',
-    '29': 'Nonprofits & Activism',
-    '30': 'Movies',
-};

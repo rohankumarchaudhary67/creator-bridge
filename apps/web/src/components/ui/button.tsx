@@ -19,9 +19,11 @@ const buttonVariants = cva(
                     'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80',
                 ghost: 'hover:bg-accent hover:text-accent-foreground',
                 link: 'text-primary underline-offset-4 hover:underline',
-                approve: 'dark:bg-[#aeeaae] dark:text-[#155115] font-bold',
-                reject: 'dark:bg-[#ff9999] dark:text-[#660000] font-bold',
-                preview: 'dark:bg-[#ffff99] dark:text-[#666600] font-bold',
+                approve:
+                    'dark:bg-[#aeeaae] dark:text-[#155115] font-bold dark:hover:bg-[#1f7a1f] dark:hover:text-white',
+                reject: 'dark:bg-[#ff9999] dark:text-[#660000] font-bold dark:hover:bg-[#990000] dark:hover:text-white',
+                preview:
+                    'dark:bg-[#ffff99] dark:text-[#666600] font-bold dark:hover:bg-[#e6e600]',
             },
             size: {
                 default: 'h-9 px-4 py-2',

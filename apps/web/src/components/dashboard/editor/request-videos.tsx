@@ -7,19 +7,18 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Badge } from '../../ui/badge';
+import Image from 'next/image';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-
-interface VideoData {
-    title: string;
-    description: string;
-    category: string;
-    tags: string[];
-    visibility: string;
-    status: string;
-    createdAt: string;
-}
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from '@/components/ui/accordion';
+import { formatTimestamp } from '@/func/func';
+import { categoryMap } from '@/func/video-category';
+import { VideoData } from '@/types/video';
 
 export default function EditorRequestVideosDashboardComponent({
     accessToken,
@@ -57,110 +56,128 @@ export default function EditorRequestVideosDashboardComponent({
     }, [accessToken]);
 
     return (
-        <div className="pt-4">
-            <h1 className="font-sans font-semibold md:text-xl p-2">
-                Request Status
-            </h1>
-            <div className="bg-muted rounded-lg px-6 py-4">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>VIDEO</TableHead>
-                            <TableHead>CATEGORY</TableHead>
-                            <TableHead>VISIBILITY</TableHead>
-                            <TableHead>STATUS</TableHead>
-                            <TableHead className="text-right">TAGS</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {videoData.length > 0 ? (
-                            videoData.map((video, index) => (
-                                <TableRow
+        <>
+            {videoData.length > 0 && (
+                <div className="pt-4">
+                    <h1 className="font-sans font-semibold md:text-xl p-2">
+                        Request Status
+                    </h1>
+                    <div className="py-4">
+                        <Accordion
+                            type="single"
+                            className="flex flex-col space-y-4"
+                            collapsible
+                        >
+                            {videoData.map((video, index) => (
+                                <AccordionItem
+                                    value={video.id}
                                     key={index}
-                                    className="border-b border-background"
+                                    className="border-b border-background bg-muted px-4 rounded-lg"
                                 >
-                                    <TableCell className="font-medium">
-                                        <div className="flex items-center space-x-4">
-                                            <div className="flex flex-col">
-                                                <h1 className="text-wrap font-sans text-lg">
-                                                    {video.title}
-                                                </h1>
-                                                <p className="text-gray-500 text-sm">
+                                    <AccordionTrigger>
+                                        <div className="flex items-center justify-between w-full pr-6">
+                                            <div className="flex items-center space-x-4">
+                                                <div className="relative w-[120px] h-[68px]">
+                                                    <Image
+                                                        src={
+                                                            video.thumbnailString ||
+                                                            '/thumbnail.png'
+                                                        }
+                                                        alt="thumbnail"
+                                                        fill
+                                                        className="rounded-lg object-cover"
+                                                    />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <h1 className="text-wrap text-lg">
+                                                        {video.title}
+                                                    </h1>
+                                                    <p className="text-sm font-mono">
+                                                        Category:{' '}
+                                                        {
+                                                            categoryMap[
+                                                                video.category
+                                                            ]
+                                                        }
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <p
+                                                className={`${video.status === 'Pending' && 'dark:text-[#cccc00] text-[#ffcc00]'} ${video.status === 'Approved' && 'dark:text-[#33cc00] text-[#33cc00]'} ${video.status === 'Rejected' && 'dark:text-[#cc0000] text-[#cc0000]'} text-md font-mono`}
+                                            >
+                                                {video.status}
+                                            </p>
+                                        </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                        <div className="px-4 py-2">
+                                            <div className="flex items-center space-x-2 py-2">
+                                                <Table>
+                                                    <TableHeader>
+                                                        <TableRow>
+                                                            <TableHead className="font-mono">
+                                                                VISIBILITY
+                                                            </TableHead>
+                                                            <TableHead className="font-mono">
+                                                                CATEGORY
+                                                            </TableHead>
+                                                            <TableHead className="text-end font-mono">
+                                                                UPLOAD DATE
+                                                            </TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        <TableRow>
+                                                            <TableCell className="font-bold">
+                                                                {video.visibility.toUpperCase()}
+                                                            </TableCell>
+                                                            <TableCell className="font-bold">
+                                                                {categoryMap[
+                                                                    video
+                                                                        .category
+                                                                ].toUpperCase()}
+                                                            </TableCell>
+                                                            <TableCell className="text-end font-bold font-mono">
+                                                                {formatTimestamp(
+                                                                    video.createdAt
+                                                                )}
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    </TableBody>
+                                                </Table>
+                                            </div>
+
+                                            <div className="flex justify-start items-start space-x-2 pt-4">
+                                                <p className="text-sm font-semibold">
+                                                    Description:
+                                                </p>
+                                                <p className="text-wrap text-gray-400 text-sm font-extralight">
                                                     {video.description}
                                                 </p>
                                             </div>
+                                            <div className="flex justify-start items-start space-x-2 pt-2">
+                                                <p className="text-sm font-mono font-semibold">
+                                                    Tags:
+                                                </p>
+                                                {video.tags.map(
+                                                    (tag, index) => (
+                                                        <span
+                                                            key={index}
+                                                            className="text-sm font-mono"
+                                                        >
+                                                            {tag},
+                                                        </span>
+                                                    )
+                                                )}
+                                            </div>
                                         </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        {categoryMap[video.category] ||
-                                            'Unknown'}
-                                    </TableCell>
-                                    <TableCell className="font-sans font-semibold">
-                                        {video.visibility.toUpperCase()}
-                                    </TableCell>
-                                    <TableCell>
-                                        {video.status === 'Pending' && (
-                                            <Badge className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
-                                                Pending
-                                            </Badge>
-                                        )}
-                                        {video.status === 'Approved' && (
-                                            <Badge className="bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                                                Approved
-                                            </Badge>
-                                        )}
-                                        {video.status === 'Rejected' && (
-                                            <Badge className="bg-red-100 text-red-800 px-2 py-1 rounded-full">
-                                                Rejected
-                                            </Badge>
-                                        )}
-                                    </TableCell>
-                                    <TableCell className="grid grid-cols-3 gap-2 w-fit">
-                                        {video.tags?.map((tag, index) => (
-                                            <Badge
-                                                key={index}
-                                                className="text-blue-500 cursor-pointer"
-                                            >
-                                                {tag}
-                                            </Badge>
-                                        ))}
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={5}
-                                    className="text-center py-4 text-gray-500"
-                                >
-                                    No videos found.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
-        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                    </div>
+                </div>
+            )}
+        </>
     );
 }
-
-const categoryMap: Record<string, string> = {
-    '22': 'People & Blogs',
-    '23': 'Comedy',
-    '10': 'Music',
-    '1': 'Film & Animation',
-    '2': 'Autos & Vehicle',
-    '15': 'Pets & Animals',
-    '17': 'Sports',
-    '18': 'Short Movies',
-    '19': 'Travel & Events',
-    '20': 'Gaming',
-    '21': 'Videoblogging',
-    '24': 'Entertainment',
-    '25': 'News & Politics',
-    '26': 'Howto & Style',
-    '27': 'Education',
-    '28': 'Science & Technology',
-    '29': 'Nonprofits & Activism',
-    '30': 'Movies',
-};

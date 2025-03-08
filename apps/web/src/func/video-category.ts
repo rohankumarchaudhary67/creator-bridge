@@ -1,0 +1,43 @@
+const categoryMap: Record<string, string> = {
+    '22': 'People & Blogs',
+    '23': 'Comedy',
+    '10': 'Music',
+    '1': 'Film & Animation',
+    '2': 'Autos & Vehicle',
+    '15': 'Pets & Animals',
+    '17': 'Sports',
+    '18': 'Short Movies',
+    '19': 'Travel & Events',
+    '20': 'Gaming',
+    '21': 'Videoblogging',
+    '24': 'Entertainment',
+    '25': 'News & Politics',
+    '26': 'Howto & Style',
+    '27': 'Education',
+    '28': 'Science & Technology',
+    '29': 'Nonprofits & Activism',
+    '30': 'Movies',
+};
+
+const categoryOptions = [
+    { value: '1', label: 'Film & Animation' },
+    { value: '2', label: 'Autos & Vehicle' },
+    { value: '10', label: 'Music' },
+    { value: '15', label: 'Pets & Animals' },
+    { value: '17', label: 'Sports' },
+    { value: '18', label: 'Short Movies' },
+    { value: '19', label: 'Travel & Events' },
+    { value: '20', label: 'Gaming' },
+    { value: '21', label: 'Videoblogging' },
+    { value: '22', label: 'People & Blogs' },
+    { value: '23', label: 'Comedy' },
+    { value: '24', label: 'Entertainment' },
+    { value: '25', label: 'News & Politics' },
+    { value: '26', label: 'Howto & Style' },
+    { value: '27', label: 'Education' },
+    { value: '28', label: 'Science & Technology' },
+    { value: '29', label: 'Nonprofits & Activism' },
+    { value: '30', label: 'Movies' },
+];
+
+export { categoryMap, categoryOptions };

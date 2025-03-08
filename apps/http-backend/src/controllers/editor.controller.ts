@@ -12,28 +12,52 @@ const fetchEditor = asyncHandler(
             const editor = await prisma.youTubeEditor.findFirst({
                 where: { ownerId: id },
                 select: {
-                    totalVideos: true,
-                    approvedVideos: true,
-                    rejectedVideos: true,
-                    pendingVideos: true,
+                    id: true, // Fetch the editor ID
                 },
             });
+
             if (!editor) {
                 return res
                     .status(404)
                     .json(new ApiError(404, 'Editor not found'));
             }
 
+            // Count total videos and statuses
+            const totalVideos = await prisma.youTubeVideo.count({
+                where: { editorId: editor.id },
+            });
+
+            const approvedVideos = await prisma.youTubeVideo.count({
+                where: { editorId: editor.id, status: 'Approved' },
+            });
+
+            const rejectedVideos = await prisma.youTubeVideo.count({
+                where: { editorId: editor.id, status: 'Rejected' },
+            });
+
+            const pendingVideos = await prisma.youTubeVideo.count({
+                where: { editorId: editor.id, status: 'Pending' },
+            });
+
             return res
                 .status(200)
                 .json(
-                    new ApiResponse(200, editor, 'Editor fetched successfully')
+                    new ApiResponse(
+                        200,
+                        {
+                            totalVideos,
+                            approvedVideos,
+                            rejectedVideos,
+                            pendingVideos,
+                        },
+                        'Editor fetched successfully'
+                    )
                 );
         } catch (error) {
-            console.error('Error fetching user:', error);
+            console.error('Error fetching editor data:', error);
             return res
                 .status(500)
-                .json(new ApiError(500, 'Error fetching user'));
+                .json(new ApiError(500, 'Error fetching editor data'));
         }
     }
 );
@@ -250,6 +274,7 @@ const fetchRequestedVideos = asyncHandler(
                     id: true,
                     title: true,
                     description: true,
+                    thumbnailString: true,
                     category: true,
                     visibility: true,
                     tags: true,

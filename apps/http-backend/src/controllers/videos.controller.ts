@@ -9,6 +9,7 @@ import { sendVideoUploadRequestEmail } from '../emails/send-request';
 
 interface MulterFiles {
     video?: Express.Multer.File[];
+    thumbnail?: Express.Multer.File[];
 }
 
 const generateRequestId = () => uuidv4();
@@ -44,6 +45,7 @@ const uploadVideo = asyncHandler(
 
             const files = req.files as MulterFiles;
             const videoFilePath = files?.video?.[0]?.path;
+            const thumbnailFilePath = files?.thumbnail?.[0]?.path;
 
             if (!videoFilePath) {
                 return res
@@ -52,11 +54,23 @@ const uploadVideo = asyncHandler(
             }
 
             // Upload video to Cloudinary
-            const uploadedVideo = await uploadOnCloudinary(videoFilePath);
+            const uploadedVideo = await uploadOnCloudinary(
+                videoFilePath as string
+            );
             if (!uploadedVideo) {
                 return res
                     .status(400)
                     .json(new ApiError(400, 'Error uploading video'));
+            }
+
+            const uploadedThumbnail = await uploadOnCloudinary(
+                thumbnailFilePath as string
+            );
+
+            if (!uploadedThumbnail) {
+                return res
+                    .status(400)
+                    .json(new ApiError(400, 'Error uploading thumbnail'));
             }
 
             // Save video metadata in the database
@@ -64,6 +78,7 @@ const uploadVideo = asyncHandler(
                 data: {
                     editorId: editor.id,
                     videoString: uploadedVideo.secure_url, // Cloudinary URL
+                    thumbnailString: uploadedThumbnail.secure_url,
                     title,
                     description,
                     category,

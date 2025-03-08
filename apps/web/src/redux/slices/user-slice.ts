@@ -7,6 +7,7 @@ interface DataState {
         email: string;
         role: string;
         image: string;
+        accessToken: string;
     } | null;
     loading: boolean;
     error: string | null;

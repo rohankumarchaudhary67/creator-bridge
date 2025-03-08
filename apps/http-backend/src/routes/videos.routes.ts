@@ -5,12 +5,13 @@ import { verifySessionToken } from '../middlewares/auth';
 
 const videoRoutes: Router = Router();
 
-videoRoutes
-    .route('/upload')
-    .post(
-        upload.fields([{ name: 'video', maxCount: 1 }]),
-        verifySessionToken,
-        uploadVideo
-    );
+videoRoutes.route('/upload').post(
+    upload.fields([
+        { name: 'video', maxCount: 1 },
+        { name: 'thumbnail', maxCount: 1 },
+    ]),
+    verifySessionToken,
+    uploadVideo
+);
 
 export { videoRoutes };

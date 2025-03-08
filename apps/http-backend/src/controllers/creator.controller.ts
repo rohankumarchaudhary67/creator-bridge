@@ -21,33 +21,58 @@ const fetchCreator = asyncHandler(
                 where: { ownerId: id },
                 select: {
                     id: true,
-                    approvedVideos: true,
-                    rejectedVideos: true,
-                    pendingVideos: true,
-                    editors: true,
                 },
             });
+
             if (!creator) {
                 return res
                     .status(404)
                     .json(new ApiError(404, 'Creator not found'));
             }
 
-            let connectionStatus = false;
-
-            const youtubeChannel = await prisma.youtubeChannel.findFirst({
-                where: { ownerId: creator.id },
+            // Count the number of videos based on their status
+            const approvedVideos = await prisma.youTubeVideo.count({
+                where: {
+                    editor: {
+                        youtuberEnvironment: { some: { id: creator.id } },
+                    },
+                    status: 'Approved',
+                },
             });
 
-            if (youtubeChannel) {
-                connectionStatus = true;
-            }
+            const rejectedVideos = await prisma.youTubeVideo.count({
+                where: {
+                    editor: {
+                        youtuberEnvironment: { some: { id: creator.id } },
+                    },
+                    status: 'Rejected',
+                },
+            });
+
+            const pendingVideos = await prisma.youTubeVideo.count({
+                where: {
+                    editor: {
+                        youtuberEnvironment: { some: { id: creator.id } },
+                    },
+                    status: 'Pending',
+                },
+            });
+
+            // Count the number of editors assigned to this creator
+            const editorsCount = await prisma.youTubeEditor.count({
+                where: { youtuberEnvironment: { some: { id: creator.id } } },
+            });
+
+            // Check if the creator has a linked YouTube channel
+            const connectionStatus = !!(await prisma.youtubeChannel.findFirst({
+                where: { ownerId: creator.id },
+            }));
 
             const response = {
-                approvedVideos: creator.approvedVideos,
-                rejectedVideos: creator.rejectedVideos,
-                pendingVideos: creator.pendingVideos,
-                editors: creator.editors.length,
+                approvedVideos,
+                rejectedVideos,
+                pendingVideos,
+                editors: editorsCount,
                 connectionStatus,
             };
 
@@ -61,7 +86,7 @@ const fetchCreator = asyncHandler(
                     )
                 );
         } catch (error) {
-            console.error('Error fetching user:', error);
+            console.error('Error fetching creator data:', error);
             return res
                 .status(500)
                 .json(new ApiError(500, 'Internal server error'));
@@ -330,6 +355,7 @@ const fetchRequestVideos = asyncHandler(
                     video: {
                         select: {
                             title: true,
+                            thumbnailString: true,
                             description: true,
                             category: true,
                             tags: true,

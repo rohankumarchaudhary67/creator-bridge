@@ -12,17 +12,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-
-interface EditorProps {
-    requestId: string;
-    senderName: string;
-    senderEmail: string;
-    senderImage: string;
-    senderYouTubeChannelName: string;
-    senderYouTubeChannelId: string;
-    senderYouTubeChannelImage: string;
-    senderYouTubeSubscriberCount: number;
-}
+import { EditorProps } from '@/types/editor';
 
 export default function PendingRequestComponent({
     accessToken,

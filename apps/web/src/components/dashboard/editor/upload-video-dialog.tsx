@@ -1,9 +1,9 @@
 import {
     Dialog,
+    DialogTrigger,
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { FaUpload } from 'react-icons/fa6';
@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import axios from 'axios';
+import { categoryOptions } from '@/func/video-category';
 
 export default function UploadVideoDialog({
     environment,
@@ -30,7 +31,8 @@ export default function UploadVideoDialog({
     accessToken: string;
 }) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [file, setFile] = useState<File | null>(null);
+    const [videoFile, setVideoFile] = useState<File | null>(null);
+    const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
     const [videoTitle, setVideoTitle] = useState('');
     const [videoDescription, setVideoDescription] = useState('');
     const [tags, setTags] = useState<string[]>([]);
@@ -38,21 +40,40 @@ export default function UploadVideoDialog({
     const [visibility, setVisibility] = useState('public');
     const [isLoading, setIsLoading] = useState(false);
 
-    const { getRootProps, getInputProps } = useDropzone({
-        accept: { 'video/*': [] },
-        maxSize: 5 * 1024 * 1024 * 1024, // 5GB
-        onDrop: (acceptedFiles) => setFile(acceptedFiles[0]),
+    // Dropzone for video
+    const { getRootProps: getVideoProps, getInputProps: getVideoInputProps } =
+        useDropzone({
+            accept: { 'video/*': [] },
+            maxSize: 5 * 1024 * 1024 * 1024, // 5GB
+            onDrop: (acceptedFiles) => setVideoFile(acceptedFiles[0]),
+        });
+
+    // Dropzone for thumbnail
+    const {
+        getRootProps: getThumbnailProps,
+        getInputProps: getThumbnailInputProps,
+    } = useDropzone({
+        accept: { 'image/*': [] },
+        maxSize: 20 * 1024 * 1024, // 20MB
+        onDrop: (acceptedFiles) => setThumbnailFile(acceptedFiles[0]),
     });
 
     const handleUploadVideo = async () => {
-        if (!file || !videoTitle || !videoDescription || !category) {
+        if (
+            !videoFile ||
+            !thumbnailFile ||
+            !videoTitle ||
+            !videoDescription ||
+            !category
+        ) {
             alert('Please fill in all required fields.');
             return;
         }
 
         setIsLoading(true);
         const formData = new FormData();
-        formData.append('video', file);
+        formData.append('video', videoFile);
+        formData.append('thumbnail', thumbnailFile);
         formData.append('title', videoTitle);
         formData.append('description', videoDescription);
         formData.append('category', category);
@@ -86,7 +107,7 @@ export default function UploadVideoDialog({
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="bg-muted rounded-lg p-4">
+            <DialogContent className="rounded-lg p-4">
                 <DialogHeader>
                     <DialogTitle>
                         Upload video for{' '}
@@ -95,130 +116,174 @@ export default function UploadVideoDialog({
                 </DialogHeader>
                 {!isLoading ? (
                     <div className="p-4">
-                        {!file ? (
-                            <div
-                                {...getRootProps()}
-                                className="border-2 border-dashed border-gray-300 p-6 rounded-lg flex flex-col items-center justify-center text-center cursor-pointer"
-                            >
-                                <input {...getInputProps()} />
-                                <CloudUpload className="w-10 h-10 text-gray-500 mb-2" />
-                                <p className="text-blue-500">Upload a file</p>
-                                <p className="text-sm text-gray-500">
-                                    or drag and drop
-                                </p>
-                                <p className="text-xs text-gray-400">
-                                    MP4, AVI, MOV up to 5GB
-                                </p>
-                            </div>
-                        ) : (
-                            <p className="text-center text-primary font-bold text-xl mt-2">
-                                Selected File: {file.name}
-                            </p>
-                        )}
-
-                        <div className="mt-4">
-                            <label className="text-sm font-medium">
-                                Video Title
-                            </label>
-                            <Input
-                                value={videoTitle}
-                                className="border border-gray-300"
-                                onChange={(e) => setVideoTitle(e.target.value)}
-                                placeholder="Enter video title"
-                            />
-                        </div>
-
-                        <div className="mt-4">
-                            <label className="text-sm font-medium">
-                                Description
-                            </label>
-                            <Textarea
-                                value={videoDescription}
-                                className="border border-gray-300"
-                                onChange={(e) =>
-                                    setVideoDescription(e.target.value)
-                                }
-                                placeholder="Enter video description"
-                                rows={3}
-                            />
-                        </div>
-
-                        <div className="mt-4">
-                            <label className="text-sm font-medium">
-                                Tags (comma separated)
-                            </label>
-                            <Input
-                                className="border border-gray-300"
-                                onChange={(e) =>
-                                    setTags(
-                                        e.target.value
-                                            .split(',')
-                                            .map((tag) => tag.trim())
-                                            .filter((tag) => tag.length > 0)
-                                    )
-                                }
-                                placeholder="e.g. vlog, travel, coding"
-                            />
-                        </div>
-
-                        <div className="mt-4">
-                            <label className="text-sm font-medium">
-                                Category
-                            </label>
-                            <Select
-                                value={category}
-                                onValueChange={setCategory}
-                            >
-                                <SelectTrigger className="border border-gray-300">
-                                    <SelectValue placeholder="Select a category" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {categoryOptions.map((option) => (
-                                        <SelectItem
-                                            key={option.value}
-                                            value={option.value}
-                                        >
-                                            {option.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        <div className="mt-4">
-                            <label className="text-sm font-medium">
-                                Visibility
-                            </label>
-                            <RadioGroup
-                                value={visibility}
-                                onValueChange={setVisibility}
-                                className="flex space-x-4 mt-2"
-                            >
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem
-                                        value="public"
-                                        id="public"
-                                    />
-                                    <label htmlFor="public" className="text-sm">
-                                        Public
-                                    </label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <RadioGroupItem
-                                        value="private"
-                                        id="private"
-                                    />
-                                    <label
-                                        htmlFor="private"
-                                        className="text-sm"
+                        <div className="flex justify-center items-start space-x-4">
+                            <div className="flex flex-col justify-start items-start space-y-4 w-full pt-8">
+                                {!videoFile ? (
+                                    <div
+                                        {...getVideoProps()}
+                                        className="border-2 border-dashed border-gray-300 w-full p-6 rounded-lg flex flex-col items-center justify-center text-center cursor-pointer"
                                     >
-                                        Private
+                                        <input {...getVideoInputProps()} />
+                                        <CloudUpload className="w-10 h-10 text-gray-500 mb-2" />
+                                        <p className="text-blue-500">
+                                            Upload a video
+                                        </p>
+                                        <p className="text-sm text-gray-500">
+                                            or drag and drop
+                                        </p>
+                                        <p className="text-xs text-gray-400">
+                                            MP4, AVI, MOV up to 5GB
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <p className="text-center text-primary font-bold text-xl mt-2">
+                                        Selected Video:{' '}
+                                        <span className="font-sans text-gray-400">
+                                            {videoFile.name}
+                                        </span>
+                                    </p>
+                                )}
+
+                                {!thumbnailFile ? (
+                                    <div
+                                        {...getThumbnailProps()}
+                                        className="border-2 border-dashed border-gray-300 w-full p-6 rounded-lg flex flex-col items-center justify-center text-center cursor-pointer"
+                                    >
+                                        <input {...getThumbnailInputProps()} />
+                                        <CloudUpload className="w-10 h-10 text-gray-500 mb-2" />
+                                        <p className="text-blue-500">
+                                            Upload a photo
+                                        </p>
+                                        <p className="text-sm text-gray-500">
+                                            or drag and drop
+                                        </p>
+                                        <p className="text-xs text-gray-400">
+                                            PNG, JPG, JPEG ut to 20MB
+                                        </p>
+                                    </div>
+                                ) : (
+                                    <p className="text-center text-primary font-bold text-xl mt-2">
+                                        Selected Thumbnail:{' '}
+                                        <span className="font-sans text-gray-400">
+                                            {thumbnailFile.name}
+                                        </span>
+                                    </p>
+                                )}
+                            </div>
+
+                            <div className="w-full">
+                                <div className="mt-4">
+                                    <label className="text-sm font-medium">
+                                        Video Title
                                     </label>
+                                    <Input
+                                        value={videoTitle}
+                                        className="border border-gray-300"
+                                        onChange={(e) =>
+                                            setVideoTitle(e.target.value)
+                                        }
+                                        placeholder="Enter video title"
+                                    />
                                 </div>
-                            </RadioGroup>
+
+                                <div className="mt-4">
+                                    <label className="text-sm font-medium">
+                                        Description
+                                    </label>
+                                    <Textarea
+                                        value={videoDescription}
+                                        className="border border-gray-300"
+                                        onChange={(e) =>
+                                            setVideoDescription(e.target.value)
+                                        }
+                                        placeholder="Enter video description"
+                                        rows={3}
+                                    />
+                                </div>
+
+                                <div className="mt-4">
+                                    <label className="text-sm font-medium">
+                                        Tags (comma separated)
+                                    </label>
+                                    <Input
+                                        className="border border-gray-300"
+                                        onChange={(e) =>
+                                            setTags(
+                                                e.target.value
+                                                    .split(',')
+                                                    .map((tag) => tag.trim())
+                                                    .filter(
+                                                        (tag) => tag.length > 0
+                                                    )
+                                            )
+                                        }
+                                        placeholder="e.g. vlog, travel, coding"
+                                    />
+                                </div>
+
+                                <div className="mt-4">
+                                    <label className="text-sm font-medium">
+                                        Category
+                                    </label>
+                                    <Select
+                                        value={category}
+                                        onValueChange={setCategory}
+                                    >
+                                        <SelectTrigger className="border border-gray-300">
+                                            <SelectValue placeholder="Select a category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {categoryOptions.map((option) => (
+                                                <SelectItem
+                                                    key={option.value}
+                                                    value={option.value}
+                                                >
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+
+                                <div className="mt-4">
+                                    <label className="text-sm font-medium">
+                                        Visibility
+                                    </label>
+                                    <RadioGroup
+                                        value={visibility}
+                                        onValueChange={setVisibility}
+                                        className="flex space-x-4 mt-2"
+                                    >
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem
+                                                value="public"
+                                                id="public"
+                                            />
+                                            <label
+                                                htmlFor="public"
+                                                className="text-sm"
+                                            >
+                                                Public
+                                            </label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem
+                                                value="private"
+                                                id="private"
+                                            />
+                                            <label
+                                                htmlFor="private"
+                                                className="text-sm"
+                                            >
+                                                Private
+                                            </label>
+                                        </div>
+                                    </RadioGroup>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="pt-4">
+                        <div className="pt-8">
                             <Button
                                 className="w-full font-sans font-semibold"
                                 onClick={handleUploadVideo}
@@ -243,24 +308,3 @@ export default function UploadVideoDialog({
         </Dialog>
     );
 }
-
-const categoryOptions = [
-    { value: '1', label: 'Film & Animation' },
-    { value: '2', label: 'Autos & Vehicle' },
-    { value: '10', label: 'Music' },
-    { value: '15', label: 'Pets & Animals' },
-    { value: '17', label: 'Sports' },
-    { value: '18', label: 'Short Movies' },
-    { value: '19', label: 'Travel & Events' },
-    { value: '20', label: 'Gaming' },
-    { value: '21', label: 'Videoblogging' },
-    { value: '22', label: 'People & Blogs' },
-    { value: '23', label: 'Comedy' },
-    { value: '24', label: 'Entertainment' },
-    { value: '25', label: 'News & Politics' },
-    { value: '26', label: 'Howto & Style' },
-    { value: '27', label: 'Education' },
-    { value: '28', label: 'Science & Technology' },
-    { value: '29', label: 'Nonprofits & Activism' },
-    { value: '30', label: 'Movies' },
-];
