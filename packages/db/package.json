@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "exports":{
+  "exports": {
     ".": "./src/prisma.ts"
   },
   "scripts": {
@@ -12,7 +12,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "@prisma/client": "6.3.1",
     "prisma": "^6.3.1"
   }
