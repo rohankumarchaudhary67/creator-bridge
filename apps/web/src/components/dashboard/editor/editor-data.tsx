@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import CountBoxDashboardComponent from '../count-box';
 import { MdSlowMotionVideo, MdOutlineCheckCircleOutline } from 'react-icons/md';
@@ -13,21 +13,25 @@ export default function EditorDataComponent({
 }) {
     const [editorData, setEditorData] = useState<EditorData | null>(null);
 
-    const fetchEditorData = async () => {
-        const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/editor/fetch`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }
-        );
-        setEditorData(response.data.data);
-    };
+    const fetchEditorData = useCallback(async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/editor/fetch`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+            setEditorData(response.data.data);
+        } catch (error) {
+            console.error('Error fetching editor data:', error);
+        }
+    }, [accessToken]); // Add dependencies
 
     useEffect(() => {
         fetchEditorData();
-    }, [accessToken]);
+    }, [fetchEditorData]);
 
     return (
         <>

@@ -273,7 +273,7 @@ const fetchRequestVideos = asyncHandler(
 
             if (!videos.length) {
                 return res
-                    .status(404)
+                    .status(400)
                     .json(new ApiError(404, 'Request videos not found'));
             }
 

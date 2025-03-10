@@ -26,7 +26,9 @@ import { toast } from 'sonner';
 
 const sanitizeTitle = (title: string) => {
     if (/[|@]/.test(title)) {
-        toast.error('Title cannot contain "|" or "@" characters.');
+        toast.error(
+            'Title cannot contain "|" or "@" characters. Due to YouTube API restrictions.'
+        );
         return null; // Return null to prevent form submission
     }
     return title
@@ -36,11 +38,17 @@ const sanitizeTitle = (title: string) => {
         .substring(0, 100); // Ensure max 100 characters
 };
 
+interface EnvironmentProps {
+    youtubeChannel?: {
+        channelTitle: string;
+    }[];
+}
+
 export default function UploadVideoDialog({
     environment,
     accessToken,
 }: {
-    environment: any;
+    environment: EnvironmentProps;
     accessToken: string;
 }) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);

@@ -1,12 +1,12 @@
 'use client';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '../ui/button';
 import { IoArrowForward } from 'react-icons/io5';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function RoleComponent({
     accessToken,
@@ -16,48 +16,59 @@ export default function RoleComponent({
     const [loading, setLoading] = useState(true);
     const [role, setRole] = useState('Editor');
 
-    const fetchUserData = async () => {
-        const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/fetch`,
-            {
-                withCredentials: true,
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
+    const fetchUserData = useCallback(async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/fetch`,
+                {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+
+            if (
+                response.data.data.role === 'Creator' ||
+                response.data.data.role === 'Editor'
+            ) {
+                redirect('/dashboard');
             }
-        );
-
-        if (
-            response.data.data.role === 'Creator' ||
-            response.data.data.role === 'Editor'
-        ) {
-            redirect('/dashboard');
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        } finally {
+            setLoading(false);
         }
-
-        setLoading(false);
-    };
-
-    const handleRoleChange = async () => {
-        const response = await axios.post(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/role`,
-            {
-                role: role,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }
-        );
-
-        if (response.data.success) {
-            redirect('/dashboard');
-        }
-    };
+    }, [accessToken]);
 
     useEffect(() => {
         fetchUserData();
-    }, [accessToken]);
+    }, [fetchUserData]);
+
+    const handleRoleChange = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/fetch`,
+                {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+
+            if (
+                response.data.data.role === 'Creator' ||
+                response.data.data.role === 'Editor'
+            ) {
+                redirect('/dashboard');
+            }
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <>

@@ -15,8 +15,10 @@ export default function DashboardComponent({
     const data = useSelector((state: RootState) => state.user);
 
     useEffect(() => {
-        dispatch(fetchUserData(accessToken));
-    }, [dispatch]);
+        if (accessToken) {
+            dispatch(fetchUserData(accessToken));
+        }
+    }, [dispatch, accessToken]);
 
     return (
         <>
