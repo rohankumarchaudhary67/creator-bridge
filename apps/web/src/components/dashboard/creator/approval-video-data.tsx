@@ -16,10 +16,6 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { TiTick } from 'react-icons/ti';
-import { GiCrossedBones } from 'react-icons/gi';
-import { MdPreview } from 'react-icons/md';
 import { ApprovalVideoData } from '@/types/video';
 import { formatTimestamp } from '@/func/func';
 import { categoryMap } from '@/func/video-category';

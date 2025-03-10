@@ -11,7 +11,7 @@ interface VideoData {
 }
 
 interface ApprovalVideoData {
-    id: string;
+    requestId: string;
     videoId: string;
     status: string;
     video: {

@@ -242,7 +242,7 @@ const fetchRequestVideos = asyncHandler(
                     recieverId: creator.id,
                 },
                 select: {
-                    id: true,
+                    requestId: true,
                     videoId: true,
                     status: true,
                     video: {

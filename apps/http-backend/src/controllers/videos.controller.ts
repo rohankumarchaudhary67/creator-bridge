@@ -75,6 +75,8 @@ const uploadVideo = asyncHandler(
                     .json(new ApiError(400, 'Error uploading thumbnail'));
             }
 
+            const tagsArray = Array.isArray(tags) ? tags : tags ? [tags] : [];
+
             // Save video metadata in the database
             const video = await prisma.youTubeVideo.create({
                 data: {
@@ -85,7 +87,7 @@ const uploadVideo = asyncHandler(
                     description,
                     category,
                     visibility,
-                    tags,
+                    tags: tagsArray,
                     status: 'Pending',
                 },
             });
