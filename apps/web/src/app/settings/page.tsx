@@ -1,28 +1,14 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserData } from '@/redux/slices/user-slice';
-import { AppDispatch, RootState } from '@/redux/store';
-import SettingsPage from './settings';
+import CreatorSetting from './CreatorSetting';
+import EditorSettingsPage from './Editorsettings';
 
-export default function SettingsContainer({
-    accessToken,
-}: {
-    accessToken: string;
-}) {
-    const dispatch = useDispatch<AppDispatch>();
-    const userData = useSelector((state: RootState) => state.user);
-
-    useEffect(() => {
-        dispatch(fetchUserData(accessToken));
-    }, [dispatch, accessToken]);
+export default function SettingsContainer() {
+    const user = 'Creator';
 
     return (
-        <>
-            <div className="2xl:px-72 md:px-36 px-6 py-6">
-                <SettingsPage accessToken={accessToken} />
-            </div>
-        </>
+        <div className="2xl:px-72 md:px-36 px-6 py-6 bg-[#181d28] min-h-screen">
+            {user === 'Editor' ? <EditorSettingsPage /> : <CreatorSetting />}
+        </div>
     );
 }
