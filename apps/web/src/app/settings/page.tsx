@@ -1,7 +1,7 @@
 'use client';
 
-import CreatorSetting from './CreatorSetting';
-import EditorSettingsPage from './Editorsettings';
+import CreatorSetting from '../../components/settings/CreatorSetting';
+import EditorSettingsPage from '../../components/settings/EditorSettings';
 
 export default function SettingsContainer() {
     const user = 'Creator';
