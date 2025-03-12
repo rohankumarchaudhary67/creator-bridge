@@ -71,7 +71,7 @@ export default function LandingPage() {
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Button
                                 size="lg"
-                                className="bg-blue-600 hover:bg-blue-700 text-lg"
+                                className="bg-blue-600 text-white hover:bg-blue-700 text-lg"
                             >
                                 Start For Free{' '}
                                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -495,7 +495,7 @@ export default function LandingPage() {
                                 </ul>
                             </CardContent>
                             <CardFooter>
-                                <Button className="w-full bg-slate-800 hover:bg-slate-700">
+                                <Button className="w-full bg-slate-800 text-white hover:bg-slate-700">
                                     Get Started
                                 </Button>
                             </CardFooter>
@@ -586,7 +586,7 @@ export default function LandingPage() {
                                 </ul>
                             </CardContent>
                             <CardFooter>
-                                <Button className="w-full bg-slate-800 hover:bg-slate-700">
+                                <Button className="w-full bg-slate-800 hover:bg-slate-700 text-white">
                                     Contact Sales
                                 </Button>
                             </CardFooter>
@@ -621,7 +621,7 @@ export default function LandingPage() {
                             <Button
                                 size="lg"
                                 variant="outline"
-                                className="border-slate-500 text-white hover:bg-slate-800 text-lg"
+                                className="border-slate-500 bg-black text-white hover:bg-slate-800 text-lg"
                             >
                                 Schedule a Demo
                             </Button>
