@@ -53,7 +53,7 @@ const Footer = () => {
                         </div>
 
                         <div>
-                            <Card className="bg-slate-900 border-slate-800">
+                            <Card className="bg-slate-900 border-slate-800 text-white">
                                 <CardHeader>
                                     <CardTitle>Send us a message</CardTitle>
                                 </CardHeader>

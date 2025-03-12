@@ -70,7 +70,7 @@ const FAQSection = () => {
                                     <AccordionTrigger className="px-6 py-4 hover:no-underline hover:bg-slate-800/50 rounded-t-lg">
                                         {faq.question}
                                     </AccordionTrigger>
-                                    <AccordionContent className="px-6 py-4 text-slate-300">
+                                    <AccordionContent className="px-6 py-4 text-white">
                                         {faq.answer}
                                     </AccordionContent>
                                 </AccordionItem>

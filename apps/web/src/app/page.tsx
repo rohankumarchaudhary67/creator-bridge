@@ -45,6 +45,7 @@ import {
 import Footer from '@/components/landing-page/footer';
 import Navbar from '@/components/landing-page/navbar';
 import FAQSection from '@/components/landing-page/faq';
+import { getServerSession } from 'next-auth';
 
 export default function LandingPage() {
     return (
@@ -103,7 +104,7 @@ export default function LandingPage() {
                 </div>
 
                 <div className="container mx-auto px-4 mt-20">
-                    <p className="text-center text-slate-400 mb-6">
+                    <p className="text-center text-white mb-6">
                         Trusted by content creators worldwide
                     </p>
                     <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-70">
@@ -153,11 +154,11 @@ export default function LandingPage() {
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-8">
-                        <Card className="bg-slate-900 border-slate-800 shadow-xl shadow-blue-900/5 hover:shadow-blue-900/10 transition-all hover:-translate-y-1">
+                        <Card className="bg-slate-900 text-white border-slate-800 shadow-xl shadow-blue-900/5 hover:shadow-blue-900/10 transition-all hover:-translate-y-1">
                             <CardHeader>
                                 <Youtube className="h-12 w-12 text-red-500 mb-4" />
                                 <CardTitle>YouTube Integration</CardTitle>
-                                <CardDescription className="text-slate-400">
+                                <CardDescription className="text-white">
                                     Seamlessly connect your YouTube channel for
                                     effortless content management.
                                 </CardDescription>
@@ -181,11 +182,11 @@ export default function LandingPage() {
                             </CardContent>
                         </Card>
 
-                        <Card className="bg-slate-900 border-slate-800 shadow-xl shadow-blue-900/5 hover:shadow-blue-900/10 transition-all hover:-translate-y-1">
+                        <Card className="bg-slate-900 text-white border-slate-800 shadow-xl shadow-blue-900/5 hover:shadow-blue-900/10 transition-all hover:-translate-y-1">
                             <CardHeader>
                                 <FileVideo className="h-12 w-12 text-blue-500 mb-4" />
                                 <CardTitle>Advanced Workflow</CardTitle>
-                                <CardDescription className="text-slate-400">
+                                <CardDescription className="text-white">
                                     Streamline your editing process with
                                     powerful collaboration tools.
                                 </CardDescription>
@@ -209,11 +210,11 @@ export default function LandingPage() {
                             </CardContent>
                         </Card>
 
-                        <Card className="bg-slate-900 border-slate-800 shadow-xl shadow-blue-900/5 hover:shadow-blue-900/10 transition-all hover:-translate-y-1">
+                        <Card className="bg-slate-900 text-white border-slate-800 shadow-xl shadow-blue-900/5 hover:shadow-blue-900/10 transition-all hover:-translate-y-1">
                             <CardHeader>
                                 <Settings className="h-12 w-12 text-purple-500 mb-4" />
                                 <CardTitle>Customizable Settings</CardTitle>
-                                <CardDescription className="text-slate-400">
+                                <CardDescription className="text-white">
                                     Tailor the platform to your specific content
                                     creation needs.
                                 </CardDescription>
@@ -422,7 +423,7 @@ export default function LandingPage() {
                                                         <p className="font-semibold">
                                                             {testimonial.name}
                                                         </p>
-                                                        <p className="text-slate-400 text-sm">
+                                                        <p className="text-white text-sm">
                                                             {testimonial.role}
                                                         </p>
                                                     </div>
@@ -460,18 +461,16 @@ export default function LandingPage() {
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                        <Card className="bg-slate-900 border-slate-800 shadow-xl hover:shadow-blue-900/10 transition-all">
+                        <Card className="bg-slate-900 border-slate-800 shadow-xl hover:shadow-blue-900/10 text-white transition-all">
                             <CardHeader>
                                 <CardTitle>Starter</CardTitle>
                                 <div className="mt-4 mb-2">
                                     <span className="text-4xl font-bold">
                                         $19
                                     </span>
-                                    <span className="text-slate-400">
-                                        /month
-                                    </span>
+                                    <span className="text-white">/month</span>
                                 </div>
-                                <CardDescription className="text-slate-400">
+                                <CardDescription className="text-white">
                                     Perfect for new creators just getting
                                     started
                                 </CardDescription>
@@ -502,7 +501,7 @@ export default function LandingPage() {
                             </CardFooter>
                         </Card>
 
-                        <Card className="bg-blue-900 border-blue-700 shadow-xl shadow-blue-500/10 hover:shadow-blue-500/20 transition-all relative">
+                        <Card className="bg-blue-900 text-white border-blue-700 shadow-xl shadow-blue-500/10 hover:shadow-blue-500/20 transition-all relative">
                             <div className="absolute top-0 right-0 -translate-y-1/2 bg-blue-600 px-3 py-1 rounded-full text-xs font-semibold">
                                 Most Popular
                             </div>
@@ -549,18 +548,16 @@ export default function LandingPage() {
                             </CardFooter>
                         </Card>
 
-                        <Card className="bg-slate-900 border-slate-800 shadow-xl hover:shadow-blue-900/10 transition-all">
+                        <Card className="bg-slate-900 text-white border-slate-800 shadow-xl hover:shadow-blue-900/10 transition-all">
                             <CardHeader>
                                 <CardTitle>Enterprise</CardTitle>
                                 <div className="mt-4 mb-2">
                                     <span className="text-4xl font-bold">
                                         $149
                                     </span>
-                                    <span className="text-slate-400">
-                                        /month
-                                    </span>
+                                    <span className="text-white">/month</span>
                                 </div>
-                                <CardDescription className="text-slate-400">
+                                <CardDescription className="text-white">
                                     For larger content networks with complex
                                     needs
                                 </CardDescription>
