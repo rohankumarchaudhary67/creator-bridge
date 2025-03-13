@@ -11,13 +11,11 @@ import { redirect } from 'next/navigation';
 export default function Navbar() {
     const [darkMode, setDarkMode] = useState(false);
 
-    // Check localStorage for dark mode preference on initial load
     useEffect(() => {
         const isDark = localStorage.getItem('darkMode') === 'true';
         setDarkMode(isDark);
     }, []);
 
-    // Update dark mode class and localStorage when state changes
     useEffect(() => {
         if (darkMode) {
             document.documentElement.classList.add('dark');
