@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import YouTubeChannelDetailsComponent from './youtube-channel';
 import { IoArrowForward } from 'react-icons/io5';
-import PreviewVideoComponent from './preview';
+import { useCallback } from 'react';
 
 interface CreatorData {
     pendingVideos: number;
@@ -33,21 +33,25 @@ export default function CreatorDashboardComponent({
 }) {
     const [creatorData, setCreatorData] = useState<CreatorData | null>(null);
 
-    const fetchCreatorData = async () => {
-        const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/creator/fetch`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }
-        );
-        setCreatorData(response.data.data);
-    };
+    const fetchCreatorData = useCallback(async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/creator/fetch`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+            setCreatorData(response.data.data);
+        } catch (error) {
+            console.error('Error fetching creator data:', error);
+        }
+    }, [accessToken]); // Add dependencies
 
     useEffect(() => {
         fetchCreatorData();
-    }, [accessToken]);
+    }, [fetchCreatorData]); // Now fetchCreatorData is a stable dependency
 
     return (
         <>

@@ -13,8 +13,6 @@ import { MdPreview } from 'react-icons/md';
 import { ApprovalVideoData } from '@/types/video';
 import { categoryMap } from '@/func/video-category';
 import { formatTimestamp } from '@/func/func';
-import { GiCrossedBones } from 'react-icons/gi';
-import { TiTick } from 'react-icons/ti';
 import HandleVideoRequestComponent from './handle-video-request';
 
 export default function PreviewVideoComponent({

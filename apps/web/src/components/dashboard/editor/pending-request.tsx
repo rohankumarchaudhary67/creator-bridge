@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
 import { toast } from 'sonner';
@@ -21,17 +21,25 @@ export default function PendingRequestComponent({
 }) {
     const [editorRequests, setEditorRequests] = useState<EditorProps[]>([]);
 
-    const fetchEditorRequests = async () => {
-        const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/editor/fetchEditorRequests`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }
-        );
-        setEditorRequests(response.data.data.pendingRequests);
-    };
+    const fetchEditorRequests = useCallback(async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/editor/fetchEditorRequests`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+            setEditorRequests(response.data.data.pendingRequests);
+        } catch (error) {
+            console.error('Error fetching editor requests:', error);
+        }
+    }, [accessToken]); // Add dependencies
+
+    useEffect(() => {
+        fetchEditorRequests();
+    }, [fetchEditorRequests]);
 
     const handleRequest = async (requestId: string, action: string) => {
         const toastId = toast.loading(
@@ -65,10 +73,6 @@ export default function PendingRequestComponent({
             console.error('Error accepting join request:', error);
         }
     };
-
-    useEffect(() => {
-        fetchEditorRequests();
-    }, [accessToken]);
 
     return (
         <>

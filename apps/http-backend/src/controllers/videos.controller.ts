@@ -75,6 +75,8 @@ const uploadVideo = asyncHandler(
                     .json(new ApiError(400, 'Error uploading thumbnail'));
             }
 
+            const tagsArray = Array.isArray(tags) ? tags : tags ? [tags] : [];
+
             // Save video metadata in the database
             const video = await prisma.youTubeVideo.create({
                 data: {
@@ -85,7 +87,7 @@ const uploadVideo = asyncHandler(
                     description,
                     category,
                     visibility,
-                    tags,
+                    tags: tagsArray,
                     status: 'Pending',
                 },
             });
@@ -212,7 +214,7 @@ const handleVideoRequest = asyncHandler(
                 // Update YouTube video status to Approved
                 await prisma.youTubeVideo.update({
                     where: { id: video.id },
-                    data: { status: 'Approved' },
+                    data: { status: 'Approved', videoString: null },
                 });
 
                 // Delete video from Cloudinary if it was uploaded successfully

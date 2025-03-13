@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { TiUserAdd } from 'react-icons/ti';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { useCallback } from 'react';
 
 interface EditorProps {
     recieverEmail: string;
@@ -61,21 +62,25 @@ export default function VideoEditorsComponent({
         }
     };
 
-    const fetchRequestedEditors = async () => {
-        const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/creator/fetchEditorRequests`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }
-        );
-        setEditorsRequest(response.data.data);
-    };
+    const fetchRequestedEditors = useCallback(async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/creator/fetchEditorRequests`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+            setEditorsRequest(response.data.data);
+        } catch (error) {
+            console.error('Error fetching editor requests:', error);
+        }
+    }, [accessToken]); // Add dependencies
 
     useEffect(() => {
         fetchRequestedEditors();
-    }, [accessToken]);
+    }, [fetchRequestedEditors]); // Now it's a stable dependency
 
     return (
         <div className="w-full h-full">

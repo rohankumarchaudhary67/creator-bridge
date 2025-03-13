@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import {
     Table,
@@ -23,21 +23,25 @@ export default function YoutubeEnvironmentComponent({
         YoutubeEnvironmentProps[]
     >([]);
 
-    const fetchYoutubeEnvironment = async () => {
-        const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/editor/fetchYouTubeEnvironment`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }
-        );
-        setYouTubeEnvironments(response.data.data);
-    };
+    const fetchYoutubeEnvironment = useCallback(async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/editor/fetchYouTubeEnvironment`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+            setYouTubeEnvironments(response.data.data);
+        } catch (error) {
+            console.error('Error fetching YouTube environments:', error);
+        }
+    }, [accessToken]); // Add dependencies
 
     useEffect(() => {
         fetchYoutubeEnvironment();
-    }, [accessToken]);
+    }, [fetchYoutubeEnvironment]);
 
     return (
         <>

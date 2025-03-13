@@ -28,10 +28,10 @@ import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth';
 
 export default async function LandingPage() {
-    // const session = await getServerSession(authOptions);
-    // if (session) {
-    //     redirect('/dashboard');
-    // }
+    const session = await getServerSession(authOptions);
+    if (session) {
+        redirect('/dashboard');
+    }
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 text-white">

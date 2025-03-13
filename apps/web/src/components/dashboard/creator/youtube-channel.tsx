@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
 import axios from 'axios';
@@ -31,31 +31,36 @@ export default function YouTubeChannelDetailsComponent({
 
     const [loading, setLoading] = useState(true);
 
-    const fetchChannelData = async () => {
-        const response = await axios.get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/youtube/fetch-channel-details`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-            }
-        );
+    const fetchChannelData = useCallback(async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/youtube/fetch-channel-details`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
 
-        setChannelData({
-            ...channelData,
-            channelId: response.data.data.channelId,
-            channelTitle: response.data.data.channelTitle,
-            channelDescription: response.data.data.channelDescription,
-            subscriberCount: response.data.data.subscriberCount,
-            videoCount: response.data.data.videoCount,
-            thumbnailUrl: response.data.data.thumbnailUrl,
-        });
-        setLoading(false);
-    };
+            setChannelData((prevData) => ({
+                ...prevData,
+                channelId: response.data.data.channelId,
+                channelTitle: response.data.data.channelTitle,
+                channelDescription: response.data.data.channelDescription,
+                subscriberCount: response.data.data.subscriberCount,
+                videoCount: response.data.data.videoCount,
+                thumbnailUrl: response.data.data.thumbnailUrl,
+            }));
+
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching channel data:', error);
+        }
+    }, [accessToken]); // Ensure only necessary dependencies
 
     useEffect(() => {
         fetchChannelData();
-    }, [accessToken]);
+    }, [fetchChannelData]); // Now `fetchChannelData` is stable
 
     return (
         <>
