@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table';
 import Image from 'next/image';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     Accordion,
     AccordionContent,
@@ -27,7 +27,7 @@ export default function EditorRequestVideosDashboardComponent({
 }) {
     const [videoData, setVideoData] = useState<VideoData[]>([]);
 
-    const fetchEditorData = async () => {
+    const fetchEditorData = useCallback(async () => {
         try {
             const response = await axios.get(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/editor/fetchRequestedVideos`,
@@ -47,13 +47,13 @@ export default function EditorRequestVideosDashboardComponent({
             console.error('Error fetching data:', error);
             setVideoData([]);
         }
-    };
+    }, [accessToken]); // Add dependencies
 
     useEffect(() => {
         if (accessToken) {
             fetchEditorData();
         }
-    }, [accessToken]);
+    }, [fetchEditorData]);
 
     return (
         <>

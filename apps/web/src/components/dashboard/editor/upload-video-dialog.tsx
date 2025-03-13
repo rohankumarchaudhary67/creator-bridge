@@ -22,12 +22,33 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import axios from 'axios';
 import { categoryOptions } from '@/func/video-category';
+import { toast } from 'sonner';
+
+const sanitizeTitle = (title: string) => {
+    if (/[|@]/.test(title)) {
+        toast.error(
+            'Title cannot contain "|" or "@" characters. Due to YouTube API restrictions.'
+        );
+        return null; // Return null to prevent form submission
+    }
+    return title
+        .replace(/[|@]/g, '') // Remove `|` and `@`
+        .replace(/\s+/g, ' ') // Replace multiple spaces with a single space
+        .trim()
+        .substring(0, 100); // Ensure max 100 characters
+};
+
+interface EnvironmentProps {
+    youtubeChannel?: {
+        channelTitle: string;
+    }[];
+}
 
 export default function UploadVideoDialog({
     environment,
     accessToken,
 }: {
-    environment: any;
+    environment: EnvironmentProps;
     accessToken: string;
 }) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -70,11 +91,14 @@ export default function UploadVideoDialog({
             return;
         }
 
+        const sanitizedTitle = sanitizeTitle(videoTitle);
+        if (!sanitizedTitle) return;
+
         setIsLoading(true);
         const formData = new FormData();
         formData.append('video', videoFile);
         formData.append('thumbnail', thumbnailFile);
-        formData.append('title', videoTitle);
+        formData.append('title', sanitizedTitle);
         formData.append('description', videoDescription);
         formData.append('category', category);
         formData.append('visibility', visibility);

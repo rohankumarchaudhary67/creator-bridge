@@ -43,7 +43,7 @@ export function UserNav({
             <DropdownMenu>
                 <DropdownMenuTrigger asChild className="cursor-pointer">
                     <Image
-                        src={data.data?.image!}
+                        src={data.data?.image ?? '/icons/user.png'}
                         alt="Avatar"
                         width={40}
                         height={40}

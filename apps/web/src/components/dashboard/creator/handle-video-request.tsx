@@ -39,7 +39,7 @@ export default function HandleVideoRequestComponent({
             const response = await axios.post(
                 `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/video/handleVideoRequest`,
                 {
-                    id,
+                    requestId: video.requestId,
                     status,
                 },
                 {
@@ -48,7 +48,7 @@ export default function HandleVideoRequestComponent({
                     },
                 }
             );
-            if (response.data.status === 200) {
+            if (response.data.statusCode == 200) {
                 toast.success('Request processed successfully!', {
                     id: toastId,
                 });
@@ -166,7 +166,10 @@ export default function HandleVideoRequestComponent({
                                 <Button
                                     variant={'approve'}
                                     onClick={() =>
-                                        handleVideoRequest(video.id, 'Approved')
+                                        handleVideoRequest(
+                                            video.requestId,
+                                            'Approved'
+                                        )
                                     }
                                 >
                                     Approve <TiTick />
@@ -175,7 +178,10 @@ export default function HandleVideoRequestComponent({
                                 <Button
                                     variant={'reject'}
                                     onClick={() =>
-                                        handleVideoRequest(video.id, 'Rejected')
+                                        handleVideoRequest(
+                                            video.requestId,
+                                            'Rejected'
+                                        )
                                     }
                                 >
                                     Reject <GiCrossedBones />

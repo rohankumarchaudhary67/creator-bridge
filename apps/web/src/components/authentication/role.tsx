@@ -1,12 +1,12 @@
 'use client';
 import axios from 'axios';
 import { redirect } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '../ui/button';
 import { IoArrowForward } from 'react-icons/io5';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function RoleComponent({
     accessToken,

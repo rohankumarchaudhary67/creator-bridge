@@ -46,6 +46,13 @@ import Footer from '@/components/landing-page/footer';
 import Navbar from '@/components/landing-page/navbar';
 import FAQSection from '@/components/landing-page/faq';
 import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+
+
+export default async function Home() {
+    const session = await getServerSession(authOptions);
+    if (session) {
+        redirect('/dashboard');
 
 export default function LandingPage() {
     return (
