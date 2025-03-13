@@ -214,7 +214,7 @@ const handleVideoRequest = asyncHandler(
                 // Update YouTube video status to Approved
                 await prisma.youTubeVideo.update({
                     where: { id: video.id },
-                    data: { status: 'Approved' },
+                    data: { status: 'Approved', videoString: null },
                 });
 
                 // Delete video from Cloudinary if it was uploaded successfully

@@ -225,16 +225,18 @@ export default function ApprovalVideoDataComponent({
                                             </Table>
                                         </div>
 
-                                        <div className="flex justify-end items-center space-x-4 pt-2 pr-2">
-                                            <PreviewVideoComponent
-                                                video={video}
-                                                accessToken={accessToken}
-                                            />
-                                            <HandleVideoRequestComponent
-                                                video={video}
-                                                accessToken={accessToken}
-                                            />
-                                        </div>
+                                        {video.status === 'Pending' && (
+                                            <div className="flex justify-end items-center space-x-4 pt-2 pr-2">
+                                                <PreviewVideoComponent
+                                                    video={video}
+                                                    accessToken={accessToken}
+                                                />
+                                                <HandleVideoRequestComponent
+                                                    video={video}
+                                                    accessToken={accessToken}
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                 </AccordionContent>
                             </AccordionItem>
