@@ -27,12 +27,11 @@ import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth';
 
-export default function LandingPage() {
-    const session = getServerSession(authOptions);
-    if (session) {
-        console.log(session);
-        redirect('/dashboard');
-    }
+export default async function LandingPage() {
+    // const session = await getServerSession(authOptions);
+    // if (session) {
+    //     redirect('/dashboard');
+    // }
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 text-white">
@@ -162,11 +161,6 @@ export default function LandingPage() {
 
             <section id="testimonials" className="py-20 bg-slate-950/50">
                 <div className="container mx-auto px-4">
-                    <SectionHeader
-                        badgeText="Success Stories"
-                        title="What Creators Are Saying"
-                        description="Join thousands of content creators who have transformed their workflow with CreatorBridge"
-                    />
                     <section
                         id="testimonials"
                         className="py-20 bg-slate-950/50"
