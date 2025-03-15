@@ -69,7 +69,7 @@ export default function YouTubeChannelDetailsComponent({
                     <div>Loading...</div>
                 ) : (
                     <div className="flex justify-center items-start space-x-4">
-                        <div className="bg-muted rounded-lg px-6 py-4 w-full">
+                        <div className="bg-gradient-to-t from-blue-900/50 to-purple-900/40 shadow-md shadow-gray-400/70 rounded-lg px-6 py-4 w-full">
                             <div className="flex justify-between items-center">
                                 <h1 className="font-sans font-semibold">
                                     Connection Status

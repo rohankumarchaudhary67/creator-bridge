@@ -12,30 +12,31 @@ export default function EditorHeaderComponent() {
         <>
             <HeaderDashboardComponent heading="Editor Dashboard">
                 <div className="flex justify-center items-center space-x-6 relative">
-                    <NotificationComponent />
                     <UserNav>
-                        <Link href="/creator-profile">
-                            <DropdownMenuItem className="cursor-pointer">
-                                <FaUser />
-                                My Profile
+                        <div className="flex flex-col justify-start items-start space-y-2">
+                            <Link href="/creator-profile">
+                                <DropdownMenuItem className="cursor-pointer text-md font-sans font-semibold hover:text-purple-500">
+                                    <FaUser />
+                                    My Profile
+                                </DropdownMenuItem>
+                            </Link>
+                            <DropdownMenuItem className="cursor-pointer text-md font-sans font-semibold hover:text-purple-500">
+                                <FaBuildingUser />
+                                Creator Profile
                             </DropdownMenuItem>
-                        </Link>
-                        <DropdownMenuItem>
-                            <FaBuildingUser />
-                            Creator Profile
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <FaVideo />
-                            Request Videos
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <FaDollarSign />
-                            Billing
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <IoSettingsSharp />
-                            Settings
-                        </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer text-md font-sans font-semibold hover:text-purple-500">
+                                <FaVideo />
+                                Request Videos
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer text-md font-sans font-semibold hover:text-purple-500">
+                                <FaDollarSign />
+                                Billing
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer text-md font-sans font-semibold hover:text-purple-500">
+                                <IoSettingsSharp />
+                                Settings
+                            </DropdownMenuItem>
+                        </div>
                     </UserNav>
                 </div>
             </HeaderDashboardComponent>

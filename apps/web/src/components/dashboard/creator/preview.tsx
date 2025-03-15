@@ -36,7 +36,7 @@ export default function PreviewVideoComponent({
                         Preview <MdPreview />
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="rounded-lg p-4">
+                <DialogContent className="rounded-lg p-4 bg-gradient-to-tr from-blue-900/50 to-purple-900/90">
                     <DialogHeader>
                         <DialogTitle className="font-sans text-lg pb-2">
                             {video.video.title}

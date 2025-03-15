@@ -77,7 +77,7 @@ export default function HandleVideoRequestComponent({
             </Button>
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="rounded-lg p-4 bg-muted">
+                <DialogContent className="rounded-lg p-4 bg-gradient-to-tr from-blue-900/50 to-purple-900/90">
                     <DialogHeader>
                         <DialogTitle>
                             {actionType === 'Approved' ? (

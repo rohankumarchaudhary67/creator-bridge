@@ -35,7 +35,7 @@ export default function EditorDataComponent({
 
     return (
         <>
-            <div className="flex justify-between items-center space-x-4 pt-2">
+            <div className="flex justify-between items-center space-x-4 pt-4">
                 <CountBoxDashboardComponent
                     heading="Total Videos"
                     count={editorData?.totalVideos ?? 0}

@@ -50,10 +50,10 @@ export default function YoutubeEnvironmentComponent({
                     <h1 className="font-sans font-semibold md:text-xl p-2">
                         YouTube Environments
                     </h1>
-                    <div className="bg-muted rounded-lg px-6 py-4">
+                    <div className="bg-purple-900/30 shadow-sm shadow-gray-400/70 rounded-lg px-6 py-4">
                         <Table>
                             <TableHeader>
-                                <TableRow>
+                                <TableRow className="hover:bg-transparent">
                                     <TableHead>YouTube Channel</TableHead>
                                     <TableHead className="text-right">
                                         Actions
@@ -63,7 +63,10 @@ export default function YoutubeEnvironmentComponent({
                             <TableBody>
                                 {youTubeEnvironments.map(
                                     (environment, index) => (
-                                        <TableRow key={index}>
+                                        <TableRow
+                                            key={index}
+                                            className="hover:bg-transparent"
+                                        >
                                             <TableCell>
                                                 <Link
                                                     className="flex justify-start items-center space-x-3 cursor-pointer"

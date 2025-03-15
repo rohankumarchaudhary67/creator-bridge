@@ -22,7 +22,7 @@ export default function DashboardComponent({
 
     return (
         <>
-            <div className="2xl:px-72 md:px-36 px-6 py-6">
+            <div className="2xl:px-48 md:px-36 px-6 py-6">
                 {data.data?.role === 'NoRole' && <div>Loading....</div>}
                 {data.data?.role === 'Creator' && (
                     <CreatorDashboardComponent accessToken={accessToken} />

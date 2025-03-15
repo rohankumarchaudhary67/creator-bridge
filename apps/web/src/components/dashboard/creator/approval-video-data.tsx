@@ -92,7 +92,7 @@ export default function ApprovalVideoDataComponent({
                             <AccordionItem
                                 key={index}
                                 value={video.videoId}
-                                className="border-b border-background bg-muted px-4 rounded-lg"
+                                className="border-b border-background bg-purple-900/30 px-4 rounded-lg shadow-sm shadow-gray-400/70"
                             >
                                 <AccordionTrigger>
                                     <div className="flex items-center justify-between w-full pr-6">

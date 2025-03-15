@@ -91,13 +91,13 @@ export default function VideoEditorsComponent({
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button
-                            className="font-sane font-semibold"
+                            className="font-sane font-semibold bg-purple-600 text-white hover:bg-purple-800"
                             onClick={() => setIsDialogOpen(true)}
                         >
                             Add <TiUserAdd />
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="bg-muted">
+                    <DialogContent className="bg-gradient-to-tr from-blue-900/90 to-purple-900/90">
                         <DialogHeader>
                             <DialogTitle>Add Your Video Editor</DialogTitle>
                             <DialogDescription>
@@ -124,7 +124,7 @@ export default function VideoEditorsComponent({
                             </div>
                             <div className="w-full flex justify-end items-center">
                                 <Button
-                                    className="font-sans font-semibold"
+                                    className="font-sans font-semibold bg-purple-600 text-white hover:bg-purple-800"
                                     onClick={handleSendRequest}
                                 >
                                     Send Request <TiUserAdd />
@@ -137,13 +137,13 @@ export default function VideoEditorsComponent({
 
             <div className="flex flex-col space-y-6 pt-4">
                 {editorsRequest.length > 0 && (
-                    <div className="flex flex-col space-y-2">
+                    <div className="flex flex-col space-y-3">
                         {editorsRequest.map((editor, index) => (
                             <div
                                 key={index}
-                                className="flex justify-between items-center bg-muted rounded-lg px-4 py-2"
+                                className="flex justify-between items-center bg-gradient-to-tr from-blue-900/50 to-purple-900/90 shadow-sm shadow-gray-400/70 rounded-lg px-4 py-2"
                             >
-                                <p className="font-sans">
+                                <p className="font-mono tracking-wide">
                                     {editor.recieverEmail}
                                 </p>
                                 <p

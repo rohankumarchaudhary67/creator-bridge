@@ -50,21 +50,30 @@ export function UserNav({
                         className="rounded-full"
                     />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                    <DropdownMenuLabel className="font-normal">
+                <DropdownMenuContent
+                    className="p-4 bg-gradient-to-r from-blue-900/90 rounded-xl mt-2 to-purple-900/90 min-w-56"
+                    align="end"
+                    forceMount
+                >
+                    <DropdownMenuLabel className="font-normal pb-2">
                         <div className="flex flex-col space-y-1">
-                            <p className="text-sm font-medium leading-none">
+                            <p className="text-lg font-sans font-semibold leading-none">
                                 {data.data?.name}
                             </p>
-                            <p className="text-xs leading-none text-muted-foreground">
+                            <p className="text-sm leading-none text-muted-foreground">
                                 {data.data?.email}
                             </p>
                         </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuGroup>{children}</DropdownMenuGroup>
+                    <DropdownMenuGroup className="py-4">
+                        {children}
+                    </DropdownMenuGroup>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild className="cursor-pointer">
+                    <DropdownMenuItem
+                        asChild
+                        className="cursor-pointer pt-4 hover:text-red-500 text-md font-sans font-semibold"
+                    >
                         <AlertDialogTrigger className="w-full">
                             <MdLogout />
                             Log out
@@ -73,7 +82,7 @@ export function UserNav({
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <AlertDialogContent>
+            <AlertDialogContent className="bg-gradient-to-r from-blue-900/70 to-purple-900/70 rounded-xl mt-2 min-w-56">
                 <AlertDialogHeader>
                     <AlertDialogTitle>Are you want to logout?</AlertDialogTitle>
                     <AlertDialogDescription>
@@ -82,7 +91,9 @@ export function UserNav({
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel className="bg-transparent">
+                        Cancel
+                    </AlertDialogCancel>
                     <AlertDialogAction
                         className="bg-red-900 hover:bg-red-800 text-white font-sans font-semibold"
                         onClick={() => {

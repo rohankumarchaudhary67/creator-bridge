@@ -58,32 +58,33 @@ export default function CreatorDashboardComponent({
             <div className="flex flex-col space-y-2">
                 <HeaderDashboardComponent heading="Creator Dashboard">
                     <div className="flex justify-center items-center space-x-6">
-                        <NotificationComponent />
                         <UserNav>
-                            <Link href="/creator-profile">
-                                <DropdownMenuItem className="cursor-pointer">
-                                    <FaUser />
-                                    My Profile
-                                </DropdownMenuItem>
-                            </Link>
+                            <div className="flex flex-col justify-start items-start space-y-2">
+                                <Link href="/creator-profile">
+                                    <DropdownMenuItem className="cursor-pointer text-md font-sans font-semibold hover:text-purple-500">
+                                        <FaUser />
+                                        My Profile
+                                    </DropdownMenuItem>
+                                </Link>
 
-                            <DropdownMenuItem>
-                                <FaVideo />
-                                Request Videos
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <FaDollarSign />
-                                Billing
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <IoSettingsSharp />
-                                Settings
-                            </DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer text-md font-sans font-semibold hover:text-purple-500">
+                                    <FaVideo />
+                                    Request Videos
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer text-md font-sans font-semibold hover:text-purple-500">
+                                    <FaDollarSign />
+                                    Billing
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="cursor-pointer text-md font-sans font-semibold hover:text-purple-500">
+                                    <IoSettingsSharp />
+                                    Settings
+                                </DropdownMenuItem>
+                            </div>
                         </UserNav>
                     </div>
                 </HeaderDashboardComponent>
 
-                <div className="flex justify-between items-center space-x-4">
+                <div className="flex justify-between items-center space-x-4 pt-4">
                     <CountBoxDashboardComponent
                         heading="Approved Videos"
                         count={creatorData?.approvedVideos ?? 0}

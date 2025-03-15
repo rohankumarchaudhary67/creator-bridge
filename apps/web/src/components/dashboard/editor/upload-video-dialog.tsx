@@ -23,6 +23,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import axios from 'axios';
 import { categoryOptions } from '@/func/video-category';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 const sanitizeTitle = (title: string) => {
     if (/[|@]/.test(title)) {
@@ -95,6 +96,7 @@ export default function UploadVideoDialog({
         if (!sanitizedTitle) return;
 
         setIsLoading(true);
+        const toastId = toast.loading('Uploading Video...');
         const formData = new FormData();
         formData.append('video', videoFile);
         formData.append('thumbnail', thumbnailFile);
@@ -115,6 +117,9 @@ export default function UploadVideoDialog({
                     },
                 }
             );
+            toast.success('Video uploaded successfully!', {
+                id: toastId,
+            });
             setIsDialogOpen(false);
         } catch (error) {
             console.error('Upload failed:', error);
@@ -126,12 +131,12 @@ export default function UploadVideoDialog({
     return (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-                <Button className="cursor-pointer font-semibold font-sans">
+                <Button className="cursor-pointer font-semibold font-sans bg-purple-600 text-white hover:bg-purple-800">
                     <FaUpload /> Upload Video
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="rounded-lg p-4">
+            <DialogContent className="rounded-lg p-4 bg-gradient-to-tr from-blue-900/50 to-purple-900/90">
                 <DialogHeader>
                     <DialogTitle>
                         Upload video for{' '}
@@ -145,7 +150,7 @@ export default function UploadVideoDialog({
                                 {!videoFile ? (
                                     <div
                                         {...getVideoProps()}
-                                        className="border-2 border-dashed border-gray-300 w-full p-6 rounded-lg flex flex-col items-center justify-center text-center cursor-pointer"
+                                        className="border-2 border-dashed border-gray-600 w-full p-6 rounded-lg flex flex-col items-center justify-center text-center cursor-pointer"
                                     >
                                         <input {...getVideoInputProps()} />
                                         <CloudUpload className="w-10 h-10 text-gray-500 mb-2" />
@@ -161,17 +166,18 @@ export default function UploadVideoDialog({
                                     </div>
                                 ) : (
                                     <p className="text-center text-primary font-bold text-xl mt-2">
-                                        Selected Video:{' '}
-                                        <span className="font-sans text-gray-400">
-                                            {videoFile.name}
-                                        </span>
+                                        <video
+                                            className="w-full rounded-lg shadow-lg"
+                                            controls
+                                            src={URL.createObjectURL(videoFile)}
+                                        />
                                     </p>
                                 )}
 
                                 {!thumbnailFile ? (
                                     <div
                                         {...getThumbnailProps()}
-                                        className="border-2 border-dashed border-gray-300 w-full p-6 rounded-lg flex flex-col items-center justify-center text-center cursor-pointer"
+                                        className="border-2 border-dashed border-gray-600 w-full p-6 rounded-lg flex flex-col items-center justify-center text-center cursor-pointer"
                                     >
                                         <input {...getThumbnailInputProps()} />
                                         <CloudUpload className="w-10 h-10 text-gray-500 mb-2" />
@@ -187,10 +193,15 @@ export default function UploadVideoDialog({
                                     </div>
                                 ) : (
                                     <p className="text-center text-primary font-bold text-xl mt-2">
-                                        Selected Thumbnail:{' '}
-                                        <span className="font-sans text-gray-400">
-                                            {thumbnailFile.name}
-                                        </span>
+                                        <Image
+                                            src={URL.createObjectURL(
+                                                thumbnailFile
+                                            )}
+                                            className="w-full rounded-lg"
+                                            alt="Thumbnail"
+                                            width={200}
+                                            height={200}
+                                        />
                                     </p>
                                 )}
                             </div>
@@ -221,7 +232,7 @@ export default function UploadVideoDialog({
                                             setVideoDescription(e.target.value)
                                         }
                                         placeholder="Enter video description"
-                                        rows={3}
+                                        rows={6}
                                     />
                                 </div>
 
@@ -324,8 +335,14 @@ export default function UploadVideoDialog({
                         </div>
                     </div>
                 ) : (
-                    <div className="flex justify-center items-center p-12">
-                        Loading
+                    <div className="flex flex-col justify-center space-x-2 items-center p-12">
+                        <span className="text-red-500 font-sans font-bold text-xl">
+                            CAUTION
+                        </span>
+                        <span className="text-xl font-sans">
+                            Do not close or reload the window until the upload
+                            is complete.
+                        </span>
                     </div>
                 )}
             </DialogContent>

@@ -11,7 +11,11 @@ export default async function Dashboard() {
 
     return (
         <>
-            <DashboardComponent accessToken={session.accessToken as string} />
+            <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 min-h-screen">
+                <DashboardComponent
+                    accessToken={session.accessToken as string}
+                />
+            </div>
         </>
     );
 }

@@ -62,7 +62,7 @@ export default function EditorRequestVideosDashboardComponent({
                     <h1 className="font-sans font-semibold md:text-xl p-2">
                         Request Status
                     </h1>
-                    <div className="py-4">
+                    <div className="py-2">
                         <Accordion
                             type="single"
                             className="flex flex-col space-y-4"
@@ -72,7 +72,7 @@ export default function EditorRequestVideosDashboardComponent({
                                 <AccordionItem
                                     value={video.id}
                                     key={index}
-                                    className="border-b border-background bg-muted px-4 rounded-lg"
+                                    className="border-b border-background bg-purple-900/30 px-4 rounded-lg shadow-sm shadow-gray-400/70"
                                 >
                                     <AccordionTrigger>
                                         <div className="flex items-center justify-between w-full pr-6">
@@ -103,7 +103,7 @@ export default function EditorRequestVideosDashboardComponent({
                                                 </div>
                                             </div>
                                             <p
-                                                className={`${video.status === 'Pending' && 'dark:text-[#cccc00] text-[#ffcc00]'} ${video.status === 'Approved' && 'dark:text-[#33cc00] text-[#33cc00]'} ${video.status === 'Rejected' && 'dark:text-[#cc0000] text-[#cc0000]'} text-md font-mono`}
+                                                className={`${video.status === 'Pending' && 'dark:text-[#cccc00] text-[#ffcc00]'} ${video.status === 'Approved' && 'dark:text-[#33cc00] text-[#33cc00]'} ${video.status === 'Rejected' && 'dark:text-[#cc0000] text-[#cc0000]'} text-lg font-mono`}
                                             >
                                                 {video.status}
                                             </p>
@@ -114,7 +114,7 @@ export default function EditorRequestVideosDashboardComponent({
                                             <div className="flex items-center space-x-2 py-2">
                                                 <Table>
                                                     <TableHeader>
-                                                        <TableRow>
+                                                        <TableRow className="hover:bg-transparent">
                                                             <TableHead className="font-mono">
                                                                 VISIBILITY
                                                             </TableHead>
@@ -127,7 +127,7 @@ export default function EditorRequestVideosDashboardComponent({
                                                         </TableRow>
                                                     </TableHeader>
                                                     <TableBody>
-                                                        <TableRow>
+                                                        <TableRow className="hover:bg-transparent">
                                                             <TableCell className="font-bold">
                                                                 {video.visibility.toUpperCase()}
                                                             </TableCell>
