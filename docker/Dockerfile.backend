@@ -1,0 +1,20 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY package.json .
+COPY pnpm-lock.yaml .
+COPY pnpm-workspace.yaml .
+
+RUN npm install -g pnpm
+RUN pnpm install --filter ./apps/http-backend
+
+COPY apps/backend ./apps/http-backend
+
+WORKDIR /app/apps/http-backend
+
+RUN pnpm build
+
+EXPOSE 8000
+
+CMD ["pnpm", "start:http-backend"]

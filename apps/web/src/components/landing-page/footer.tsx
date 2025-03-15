@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,7 +7,6 @@ import {
     Linkedin,
     Github,
     Mail,
-    HeartHandshake,
 } from 'lucide-react';
 
 export default function Footer() {
@@ -20,8 +17,7 @@ export default function Footer() {
                     {/* Company Info */}
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
-                            <HeartHandshake className="h-8 w-8 text-blue-500" />
-                            <span className="text-xl font-bold">
+                            <span className="text-2xl font-bold">
                                 CreatorBridge
                             </span>
                         </div>
@@ -47,7 +43,7 @@ export default function Footer() {
                                 <li key={index}>
                                     <Link
                                         href={link.href}
-                                        className="text-slate-400 hover:text-blue-400 transition-colors text-sm"
+                                        className="text-slate-400 hover:text-purple-400 transition-colors text-sm"
                                     >
                                         {link.text}
                                     </Link>
@@ -69,7 +65,7 @@ export default function Footer() {
                                 <li key={index}>
                                     <Link
                                         href={link.href}
-                                        className="text-slate-400 hover:text-blue-400 transition-colors text-sm"
+                                        className="text-slate-400 hover:text-purple-400 transition-colors text-sm"
                                     >
                                         {link.text}
                                     </Link>
@@ -85,23 +81,23 @@ export default function Footer() {
                         </h3>
                         <div className="flex gap-4">
                             {[
-                                { icon: Youtube, href: 'https://youtube.com' },
-                                { icon: Twitter, href: 'https://twitter.com' },
+                                { icon: Youtube, href: '/' },
+                                { icon: Twitter, href: '/' },
                                 {
                                     icon: Instagram,
-                                    href: 'https://instagram.com',
+                                    href: '/',
                                 },
                                 {
                                     icon: Linkedin,
-                                    href: 'https://linkedin.com',
+                                    href: '/',
                                 },
-                                { icon: Github, href: 'https://github.com' },
+                                { icon: Github, href: '/' },
                             ].map((social, index) => (
                                 <Button
                                     key={index}
                                     variant="ghost"
                                     size="icon"
-                                    className="text-slate-400 hover:bg-slate-800 hover:text-blue-400"
+                                    className="text-slate-400 hover:bg-slate-800 hover:text-purple-400"
                                     asChild
                                 >
                                     <Link
@@ -118,10 +114,10 @@ export default function Footer() {
                         <div className="pt-4">
                             <Button
                                 variant="outline"
-                                className="border-slate-700 text-slate-300 hover:border-blue-500 hover:text-blue-400"
+                                className="border-slate-700 text-slate-300 hover:border-purple-500 hover:text-purple-400"
                                 asChild
                             >
-                                <Link href="mailto:support@creatorbridge.com">
+                                <Link href="mailto:rohankumarchaudhary67@gmail.com">
                                     <Mail className="mr-2 h-4 w-4" />
                                     Contact Support
                                 </Link>
@@ -137,7 +133,7 @@ export default function Footer() {
                         reserved.
                     </p>
                     <p className="text-slate-600 text-xs mt-2">
-                        Built with ❤️ for content creators worldwide
+                        Built with for content creators worldwide
                     </p>
                 </div>
             </div>

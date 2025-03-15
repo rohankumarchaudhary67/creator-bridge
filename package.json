@@ -6,7 +6,8 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "prepare": "husky"
+    "prepare": "husky",
+    "start:http-backend": "node ./apps/http-backend/dist/index.js"
   },
   "devDependencies": {
     "husky": "^9.1.7",

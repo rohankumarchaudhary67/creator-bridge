@@ -1,4 +1,3 @@
-'use client';
 import React from 'react';
 import { Badge } from '../ui/badge';
 import {
@@ -8,14 +7,14 @@ import {
     AccordionContent,
 } from '../ui/accordion';
 
-const FAQSection = () => {
+export default function FaqComponent() {
     return (
         <div>
             <section id="faq" className="py-20 bg-slate-950/50">
                 <div className="container mx-auto px-4">
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-8">
                         <Badge className="mb-4 bg-purple-900/60 text-purple-200 hover:bg-purple-800/60">
-                            Questions Answered
+                            FAQ
                         </Badge>
                         <h2 className="text-3xl md:text-5xl font-bold mb-6">
                             Frequently Asked Questions
@@ -81,6 +80,4 @@ const FAQSection = () => {
             </section>
         </div>
     );
-};
-
-export default FAQSection;
+}

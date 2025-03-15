@@ -26,7 +26,7 @@ export default function AuthenticationComponent() {
     ];
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen space-y-10 bg-background">
+        <div className="flex flex-col items-center justify-center h-screen space-y-10 bg-gradient-to-r from-blue-900/30 to-purple-900/30">
             <div className="text-center space-y-4">
                 <h1 className="font-sans font-semibold text-3xl">
                     Get Started with Creator Bridge
@@ -43,7 +43,7 @@ export default function AuthenticationComponent() {
                         {column.map((feature, index) => (
                             <div
                                 key={index}
-                                className="bg-muted px-6 py-3 rounded-md flex items-center space-x-3"
+                                className=" px-6 py-3 rounded-md flex items-center space-x-3"
                             >
                                 <Image
                                     src="/icons/check.png"
