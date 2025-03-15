@@ -43,7 +43,7 @@ export default function AuthenticationComponent() {
                         {column.map((feature, index) => (
                             <div
                                 key={index}
-                                className=" px-6 py-3 rounded-md flex items-center space-x-3"
+                                className="px-8 py-4 rounded-lg flex items-center space-x-3 bg-purple-900/30"
                             >
                                 <Image
                                     src="/icons/check.png"
@@ -60,8 +60,9 @@ export default function AuthenticationComponent() {
 
             <div className="pt-10">
                 <Button
+                    size={'lg'}
                     onClick={handleGoogleAuth}
-                    className="font-sans font-semibold flex items-center space-x-2"
+                    className="font-sans font-semibold flex items-center space-x-2 text-lg"
                 >
                     <Image
                         src="/icons/google.png"

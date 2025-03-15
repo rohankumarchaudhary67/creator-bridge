@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '../ui/button';
 import { IoArrowForward } from 'react-icons/io5';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 export default function RoleComponent({
     accessToken,
@@ -38,6 +39,7 @@ export default function RoleComponent({
     };
 
     const handleRoleChange = async () => {
+        const toastId = toast.loading('Updating Role...');
         const response = await axios.post(
             `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/user/role`,
             {
@@ -51,6 +53,9 @@ export default function RoleComponent({
         );
 
         if (response.data.success) {
+            toast.success('Role Updated Successfully!', {
+                id: toastId,
+            });
             redirect('/dashboard');
         }
     };
@@ -63,7 +68,7 @@ export default function RoleComponent({
         <>
             {loading && <>Loading...</>}
             {!loading && (
-                <div className="flex flex-col justify-center items-center h-screen space-y-10">
+                <div className="flex flex-col justify-center items-center h-screen space-y-10 bg-gradient-to-r from-blue-900/30 to-purple-900/30">
                     <div className="flex flex-col justify-center items-center">
                         <div className="flex space-x-4 items-center">
                             <Image
@@ -85,9 +90,9 @@ export default function RoleComponent({
                             defaultValue="Editor"
                             className="flex justify-center items-center space-x-6"
                         >
-                            <div className="flex flex-col space-y-10 border-2 p-8 items-center justify-center rounded-xl">
+                            <div className="flex flex-col space-y-10 border-2 border-gray-400 p-8 items-center justify-center rounded-xl">
                                 <div className="flex flex-col space-y-4">
-                                    <div className="bg-muted md:px-6 md:py-3 rounded-md flex items-center justify-start space-x-3">
+                                    <div className="bg-purple-900/30 md:px-6 md:py-3 rounded-md flex items-center justify-start space-x-3">
                                         <Image
                                             src="/icons/editor.png"
                                             alt="Google"
@@ -96,7 +101,7 @@ export default function RoleComponent({
                                         />
                                         <span>Seamless Upload Process</span>
                                     </div>
-                                    <div className="bg-muted md:px-6 md:py-3 rounded-md flex items-center justify-start space-x-3">
+                                    <div className="bg-purple-900/30 md:px-6 md:py-3 rounded-md flex items-center justify-start space-x-3">
                                         <Image
                                             src="/icons/editor.png"
                                             alt="Google"
@@ -105,7 +110,7 @@ export default function RoleComponent({
                                         />
                                         <span>Faster Approvals</span>
                                     </div>
-                                    <div className="bg-muted md:px-6 md:py-3 rounded-md flex items-center justify-start space-x-3">
+                                    <div className="bg-purple-900/30 md:px-6 md:py-3 rounded-md flex items-center justify-start space-x-3">
                                         <Image
                                             src="/icons/editor.png"
                                             alt="Google"
@@ -131,9 +136,9 @@ export default function RoleComponent({
                                     </Label>
                                 </div>
                             </div>
-                            <div className="flex flex-col space-y-10 border-2 p-8 items-center justify-center rounded-xl">
+                            <div className="flex flex-col space-y-10 border-2 border-gray-400 p-8 items-center justify-center rounded-xl">
                                 <div className="flex flex-col space-y-4">
-                                    <div className="bg-muted md:px-6 md:py-3 rounded-md flex items-center justify-start space-x-3">
+                                    <div className="bg-purple-900/30 md:px-6 md:py-3 rounded-md flex items-center justify-start space-x-3">
                                         <Image
                                             src="/icons/creator.png"
                                             alt="Google"
@@ -142,7 +147,7 @@ export default function RoleComponent({
                                         />
                                         <span>One-Click Approvals</span>
                                     </div>
-                                    <div className="bg-muted md:px-6 md:py-3 rounded-md flex items-center justify-start space-x-3">
+                                    <div className="bg-purple-900/30 md:px-6 md:py-3 rounded-md flex items-center justify-start space-x-3">
                                         <Image
                                             src="/icons/creator.png"
                                             alt="Google"
@@ -151,7 +156,7 @@ export default function RoleComponent({
                                         />
                                         <span>Save Time & Bandwidth</span>
                                     </div>
-                                    <div className="bg-muted md:px-6 md:py-3 rounded-md flex items-center justify-start space-x-3">
+                                    <div className="bg-purple-900/30 md:px-6 md:py-3 rounded-md flex items-center justify-start space-x-3">
                                         <Image
                                             src="/icons/creator.png"
                                             alt="Google"
@@ -180,7 +185,8 @@ export default function RoleComponent({
                         </RadioGroup>
                     </div>
                     <Button
-                        className="font-sans font-semibold"
+                        size={'lg'}
+                        className="font-sans font-semibold text-lg bg-purple-600 text-white hover:bg-purple-800"
                         onClick={() => handleRoleChange()}
                     >
                         Continue as {role} <IoArrowForward />
