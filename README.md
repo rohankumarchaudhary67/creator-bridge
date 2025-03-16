@@ -4,6 +4,64 @@
 
 #### Create Bridge : [https://creatorbridge.rkc.digitial]
 
+
+## Instant Docker Setup
+
+Clone the project
+
+```bash
+  git clone https://github.com/rohankumarchaudhary67/creator-bridge
+```
+
+Go to the project directory
+
+```bash
+  cd creator-bridge
+```
+
+Run command
+
+```bash
+  docker-compose up
+```
+
+## Manual Installation
+
+Clone the project
+
+```bash
+  git clone https://github.com/rohankumarchaudhary67/creator-bridge
+```
+
+Go to the project directory
+
+```bash
+  cd creator-bridge
+```
+
+Install dependencies
+
+```bash
+  pnpm install
+```
+
+Start the server
+
+```bash
+  pnpm run start
+```
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+`CORS_ORIGIN`
+`SESSION_TOKEN_SECRET`
+`NEXTAUTH_URL`
+`NEXT_PUBLIC_BACKEND_URL`
+`AUTH_SECRET`
+
+
 ## Features
 
 - **Seamless YouTube Integration**: Simple one-click YouTube channel connection, allowing creators to stream directly to their editors.
@@ -43,41 +101,6 @@
 
 **Database:** Postgres SQL, Prisma ORM
 
-## Run Locally
-
-Clone the project
-
-```bash
-  git clone https://github.com/rohankumarchaudhary67/creator-bridge
-```
-
-Go to the project directory
-
-```bash
-  cd creator-bridge
-```
-
-Install dependencies
-
-```bash
-  pnpm install
-```
-
-Start the server
-
-```bash
-  pnpm run start
-```
-
-## Environment Variables
-
-To run this project, you will need to add the following environment variables to your .env file
-
-`CORS_ORIGIN`
-`SESSION_TOKEN_SECRET`
-`NEXTAUTH_URL`
-`NEXT_PUBLIC_BACKEND_URL`
-`AUTH_SECRET`
 
 ## License
 
