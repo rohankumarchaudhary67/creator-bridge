@@ -22,10 +22,21 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+    env_file:
+      - .env
     environment:
       - DATABASE_URL=postgresql://cb-database:mysecret@postgres:5432/creator-bridge-db
       - CORS_ORIGIN=http://localhost:3000
       - SESSION_TOKEN_SECRET=mysecret
+      - FRONTEND_APP_DOMAIN_URL=http://localhost:3000
+      - NEXT_PUBLIC_WEB_URL=http://localhost:3000
+      - YOUTUBE_REDIRECT_URI=http://localhost:8000/api/v1/youtube/callback
+      - YOUTUBE_CLIENT_ID=${YOUTUBE_CLIENT_ID}
+      - YOUTUBE_CLIENT_SECRET=${YOUTUBE_CLIENT_SECRET}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
 
   web:
     build: 
@@ -36,11 +47,15 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    env_file:
+      - .env
     environment:
       - NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
       - NEXTAUTH_URL=http://localhost:3000
       - NEXTAUTH_SECRET=mysecret
       - NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
 
 
 volumes:
