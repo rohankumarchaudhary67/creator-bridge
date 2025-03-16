@@ -1,7 +1,6 @@
 {
-  "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-      "jsx": "react",
+    "jsx": "react",
       "outDir": "./dist",
       "rootDir": "./src",
       "strict": true,
@@ -14,6 +13,15 @@
       "skipLibCheck": false,
       "esModuleInterop": true,
       "resolveJsonModule": true,
-      "isolatedModules": true
+      "isolatedModules": true,
+      "declaration": true,
+      "declarationMap": true,
+      "incremental": false,
+      "lib": ["es2022", "DOM", "DOM.Iterable"],
+      "module": "NodeNext",
+      "moduleDetection": "force",
+      "moduleResolution": "NodeNext",
+      "noUncheckedIndexedAccess": true,
+      "target": "ES2022"
   }
 }

@@ -3,23 +3,23 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/http-backend/package.json ./apps/http-backend/
+COPY apps/web/package.json ./apps/web/
 COPY packages/db/package.json ./packages/db/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 
 RUN npm install -g pnpm
 RUN pnpm install
 
-COPY apps/http-backend ./apps/http-backend
+COPY apps/web ./apps/web
 COPY packages/db ./packages/db
 COPY packages/eslint-config ./packages/eslint-config
 
 WORKDIR /app/packages/db
 RUN npx prisma generate
 
-WORKDIR /app/apps/http-backend
+WORKDIR /app/apps/web
 RUN pnpm run build
 
-EXPOSE 8000
+EXPOSE 3000
 
 CMD ["pnpm", "start"]

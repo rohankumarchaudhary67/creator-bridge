@@ -34,7 +34,7 @@ export default function FaqComponent() {
                                 {
                                     question:
                                         'How does the YouTube integration work?',
-                                    answer: 'Our platform connects securely to your YouTube account through OAuth. This gives you the ability to upload videos, manage metadata, and access analytics directly through CreatorBridge. The connection is secure and can be revoked at any time.',
+                                    answer: 'Our platform connects securely to your YouTube account through OAuth. This gives you the ability to upload videos, manage metadata directly through CreatorBridge. The connection is secure and can be revoked at any time.',
                                 },
                                 {
                                     question:

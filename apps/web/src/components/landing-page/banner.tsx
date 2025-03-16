@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import Link from 'next/link';
 
 export default function BannerComponent() {
     return (
@@ -20,10 +21,12 @@ export default function BannerComponent() {
                             productivity with CreatorBridge.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Button className="bg-purple-600 hover:bg-purple-800 text-white text-lg font-sans">
-                                Start Your Free Trial
-                                <ArrowRight className="ml-2 h-5 w-5" />
-                            </Button>
+                            <Link href="/authentication">
+                                <Button className="bg-purple-600 hover:bg-purple-800 text-white text-lg font-sans">
+                                    Start Your Free Trial
+                                    <ArrowRight className="ml-2 h-5 w-5" />
+                                </Button>
+                            </Link>
                             <Button className="text-lg font-sans text-white bg-gray-600 hover:bg-gray-800">
                                 Schedule a Demo
                             </Button>

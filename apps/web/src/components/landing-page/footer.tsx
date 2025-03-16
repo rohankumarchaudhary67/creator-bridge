@@ -38,7 +38,6 @@ export default function Footer() {
                                 { href: '#features', text: 'Features' },
                                 { href: '#testimonials', text: 'Testimonials' },
                                 { href: '#pricing', text: 'Pricing' },
-                                { href: '/blog', text: 'Blog' },
                             ].map((link, index) => (
                                 <li key={index}>
                                     <Link
@@ -81,17 +80,26 @@ export default function Footer() {
                         </h3>
                         <div className="flex gap-4">
                             {[
-                                { icon: Youtube, href: '/' },
-                                { icon: Twitter, href: '/' },
+                                {
+                                    icon: Youtube,
+                                    href: 'https://www.youtube.com/@rohan-kumar-chaudhary',
+                                },
+                                {
+                                    icon: Twitter,
+                                    href: 'https://x.com/rohan_kumar67',
+                                },
                                 {
                                     icon: Instagram,
-                                    href: '/',
+                                    href: 'https://www.instagram.com/r.rohanchaudhary/',
                                 },
                                 {
                                     icon: Linkedin,
-                                    href: '/',
+                                    href: 'https://www.linkedin.com/in/rohankumarchaudhary67/',
                                 },
-                                { icon: Github, href: '/' },
+                                {
+                                    icon: Github,
+                                    href: 'https://github.com/rohankumarchaudhary67',
+                                },
                             ].map((social, index) => (
                                 <Button
                                     key={index}

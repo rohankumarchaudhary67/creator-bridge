@@ -132,7 +132,7 @@ export default function CreatorDashboardComponent({
                         />
                         <div className="flex justify-end pb-6">
                             <Button
-                                className="font-bold hover:underline font-sans tracking-wide hover:dark:bg-black"
+                                className="font-bold hover:underline font-sans tracking-wide hover:text-purple-500 hover:bg-transparent"
                                 variant={'ghost'}
                             >
                                 View all <IoArrowForward />

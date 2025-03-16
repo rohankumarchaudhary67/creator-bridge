@@ -37,13 +37,13 @@ export default function AuthenticationComponent() {
                 </p>
             </div>
 
-            <div className="flex flex-wrap justify-center items-start space-x-4 md:pt-6 w-full">
+            <div className="flex flex-wrap justify-center items-start space-x-6 md:pt-6 w-full">
                 {featureColumns.map((column, colIndex) => (
-                    <div key={colIndex} className="flex flex-col space-y-4">
+                    <div key={colIndex} className="flex flex-col space-y-6">
                         {column.map((feature, index) => (
                             <div
                                 key={index}
-                                className="px-8 py-4 rounded-lg flex items-center space-x-3 bg-purple-900/30"
+                                className="px-8 py-4 rounded-lg flex items-center space-x-3 bg-gradient-to-r from-blue-900/30 to-purple-900/300 shadow-sm shadow-gray-400/70"
                             >
                                 <Image
                                     src="/icons/check.png"
@@ -51,7 +51,7 @@ export default function AuthenticationComponent() {
                                     width={20}
                                     height={20}
                                 />
-                                <span>{feature}</span>
+                                <span className="font-mono">{feature}</span>
                             </div>
                         ))}
                     </div>

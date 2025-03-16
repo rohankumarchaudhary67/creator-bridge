@@ -154,7 +154,7 @@ export default function ApprovalVideoDataComponent({
                                         <div className="flex items-center space-x-2 py-2">
                                             <Table>
                                                 <TableHeader>
-                                                    <TableRow>
+                                                    <TableRow className="hover:bg-transparent">
                                                         <TableHead className="font-mono">
                                                             UPLOAD BY
                                                         </TableHead>
@@ -170,7 +170,7 @@ export default function ApprovalVideoDataComponent({
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
-                                                    <TableRow>
+                                                    <TableRow className="hover:bg-transparent">
                                                         <TableCell className="font-medium">
                                                             <div className="flex items-center space-x-2">
                                                                 <Image

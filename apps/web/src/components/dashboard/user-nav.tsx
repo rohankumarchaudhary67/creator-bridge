@@ -51,7 +51,7 @@ export function UserNav({
                     />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                    className="p-4 bg-gradient-to-r from-blue-900/90 rounded-xl mt-2 to-purple-900/90 min-w-56"
+                    className="p-4 bg-gradient-to-r from-blue-900/30 rounded-xl mt-2 to-purple-900/30 backdrop-blur-md min-w-56"
                     align="end"
                     forceMount
                 >
@@ -82,7 +82,7 @@ export function UserNav({
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <AlertDialogContent className="bg-gradient-to-r from-blue-900/70 to-purple-900/70 rounded-xl mt-2 min-w-56">
+            <AlertDialogContent className="bg-gradient-to-r from-blue-900/50 to-purple-900/50 rounded-xl mt-2 min-w-56 backdrop-blur-md">
                 <AlertDialogHeader>
                     <AlertDialogTitle>Are you want to logout?</AlertDialogTitle>
                     <AlertDialogDescription>

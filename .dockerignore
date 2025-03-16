@@ -1,8 +1,5 @@
 # Ignore node modules and dependencies
 **/node_modules
-**/pnpm-lock.yaml
-**/yarn.lock
-**/package-lock.json
 
 # Ignore build artifacts
 **/dist

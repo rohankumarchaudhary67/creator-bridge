@@ -136,7 +136,7 @@ export default function UploadVideoDialog({
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="rounded-lg p-4 bg-gradient-to-tr from-blue-900/50 to-purple-900/90">
+            <DialogContent className="rounded-lg p-4 bg-gradient-to-tr from-blue-900/50 to-purple-900/90 backdrop-blur-sm">
                 <DialogHeader>
                     <DialogTitle>
                         Upload video for{' '}
@@ -320,7 +320,7 @@ export default function UploadVideoDialog({
 
                         <div className="pt-8">
                             <Button
-                                className="w-full font-sans font-semibold"
+                                className="w-full font-sans font-semibold bg-purple-600 text-white hover:bg-purple-800"
                                 onClick={handleUploadVideo}
                                 disabled={isLoading}
                             >

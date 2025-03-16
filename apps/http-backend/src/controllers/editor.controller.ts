@@ -105,7 +105,8 @@ const fetchEditorRequests = asyncHandler(
 
             const responseData = {
                 pendingRequests: editorRequests.filter(
-                    (request) => request.status === 'Pending'
+                    (request: { status: string }) =>
+                        request.status === 'Pending'
                 ),
             };
 
