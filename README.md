@@ -7,19 +7,10 @@
 
 ## Instant Docker Setup
 
-Clone the project
+> [!NOTE]  
+> Your Docker Demon should be online
 
-```bash
-  git clone https://github.com/rohankumarchaudhary67/creator-bridge
-```
-
-Go to the project directory
-
-```bash
-  cd creator-bridge
-```
-
-Run command
+Clone project & Run this command
 
 ```bash
   docker-compose up
