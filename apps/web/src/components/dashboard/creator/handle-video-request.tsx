@@ -53,6 +53,7 @@ export default function HandleVideoRequestComponent({
                     id: toastId,
                 });
                 setIsDialogOpen(false);
+                window.location.reload();
             }
         } catch (error) {
             console.error('Error handling video request:', error);

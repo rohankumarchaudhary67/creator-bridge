@@ -97,7 +97,7 @@ export default function VideoEditorsComponent({
                             Add <TiUserAdd />
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="bg-gradient-to-tr from-blue-900/90 to-purple-900/90">
+                    <DialogContent className="bg-gradient-to-tr from-blue-900/30 to-purple-900/30 backdrop-blur-md">
                         <DialogHeader>
                             <DialogTitle>Add Your Video Editor</DialogTitle>
                             <DialogDescription>

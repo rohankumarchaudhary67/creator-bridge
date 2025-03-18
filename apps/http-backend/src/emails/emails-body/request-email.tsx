@@ -65,8 +65,8 @@ export default function RequestEmail({
                 <Row>
                     <Heading as="h2">
                         <Button
-                            href={`${process.env.FRONTEND_APP_DOMAIN_FOR_EMAIL}/request?id=${requestId}`}
-                            style={{ color: '#fbb87e' }}
+                            href={`${process.env.FRONTEND_APP_DOMAIN_FOR_EMAIL}/dashboard`}
+                            style={{ color: '#805ad5' }}
                         >
                             Accept Invitation
                         </Button>

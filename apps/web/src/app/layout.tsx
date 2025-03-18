@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/providers/theme-provider';
 import { Session_Provider } from '@/providers/session-provider';
 import ReduxProvider from '@/providers/redux-provider';
 import { Toaster } from '@/components/ui/sonner';
+import { Navbar } from '@/components/landing-page';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -41,7 +42,10 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     <Session_Provider>
-                        <ReduxProvider>{children}</ReduxProvider>
+                        <ReduxProvider>
+                            <Navbar />
+                            {children}
+                        </ReduxProvider>
                         <Toaster richColors />
                     </Session_Provider>
                 </ThemeProvider>

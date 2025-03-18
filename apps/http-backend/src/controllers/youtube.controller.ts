@@ -199,13 +199,6 @@ const uploadVideoToYouTubeHelper = async (id: string, videoId: string) => {
             where: { id: videoId },
         });
 
-        console.log('Uploading video with metadata:', {
-            title: youtubeVideo?.title,
-            description: youtubeVideo?.description,
-            category: youtubeVideo?.category,
-            tags: youtubeVideo?.tags,
-        });
-
         if (!youtubeVideo) {
             throw new Error('YouTube video not found');
         }
@@ -250,7 +243,6 @@ const uploadVideoToYouTubeHelper = async (id: string, videoId: string) => {
         try {
             const tokenInfo =
                 await oauth2Client.getTokenInfo(decryptedAccessToken);
-            console.log('Token Info:', tokenInfo);
         } catch (tokenError) {
             if (!decryptedRefreshToken) {
                 console.log('No refresh token available');
@@ -375,7 +367,6 @@ const getYoutubeChannelDetails = asyncHandler(
             try {
                 const tokenInfo =
                     await oauth2Client.getTokenInfo(decryptedAccessToken);
-                console.log('Token Info:', tokenInfo);
             } catch (tokenError) {
                 if (!decryptedRefreshToken) {
                     return res

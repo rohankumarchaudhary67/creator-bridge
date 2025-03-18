@@ -11,9 +11,9 @@ app.use(
     })
 );
 
-app.use(express.json());
+app.use(express.json({ limit: '10gb' })); // Adjust limit as needed
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ limit: '10gb', extended: true }));
 
 app.use;
 

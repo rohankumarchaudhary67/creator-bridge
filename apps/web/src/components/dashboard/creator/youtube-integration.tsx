@@ -26,11 +26,11 @@ export default function YoutubeIntegrationDashboardComponent({
     return (
         <>
             <div className="py-4">
-                <h1 className="font-sans font-semibold md:text-xl p-2">
+                <h1 className="font-sans font-semibold md:text-xl p-2 ">
                     YouTube Integration
                 </h1>
-                <div className="flex justify-center items-start space-x-4">
-                    <div className="bg-muted rounded-lg px-6 py-4 w-full">
+                <div className="flex justify-center items-start space-x-4 ">
+                    <div className="bg-muted rounded-lg px-6 py-4 w-full bg-gradient-to-t from-blue-900/50 to-purple-900/40 shadow-md shadow-gray-400/70">
                         <div className="flex justify-between items-center">
                             <h1 className="font-sans font-semibold">
                                 Connection Status
@@ -39,7 +39,7 @@ export default function YoutubeIntegrationDashboardComponent({
                                 Not Connected
                             </Badge>
                         </div>
-                        <div className="flex flex-col justify-center items-center space-y-4 mt-6 py-12 border-2 border-gray-500 border-dashed rounded-lg">
+                        <div className="flex flex-col justify-center items-center space-y-4 mt-6 py-12 border-2 border-gray-500 border-dashed rounded-lg ">
                             <Image
                                 src="/icons/youtube.png"
                                 alt="youtube"
@@ -89,7 +89,7 @@ export default function YoutubeIntegrationDashboardComponent({
                         </div>
                     </div>
 
-                    <div className="bg-muted rounded-lg px-6 py-4 w-full">
+                    <div className="bg-muted rounded-lg px-6 py-4 w-full bg-gradient-to-t from-blue-900/50 to-purple-900/40 shadow-md shadow-gray-400/70">
                         <div className="flex justify-between items-center">
                             <h1 className="font-sans font-semibold">
                                 Connection Requirements
@@ -130,7 +130,7 @@ export default function YoutubeIntegrationDashboardComponent({
 
                         <p className="font-sans pt-6 font-thin">
                             Need help? Contact us at{' '}
-                            <span className="text-blue-600">
+                            <span className="text-white font-mono tracking-wide underline">
                                 rohankumarchaudhary67@gmail.com
                             </span>
                         </p>

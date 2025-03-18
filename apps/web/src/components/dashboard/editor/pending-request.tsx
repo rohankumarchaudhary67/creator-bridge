@@ -81,10 +81,10 @@ export default function PendingRequestComponent({
                     <h2 className="font-sans font-semibold text-lg pb-2 pt-4">
                         Pending Requests
                     </h2>
-                    <div className="bg-muted rounded-lg px-4 py-2 flex justify-center items-center">
+                    <div className="bg-purple-900/30 shadow-md shadow-gray-400/40 backdrop-blur-md rounded-lg px-4 py-2 flex justify-center items-center">
                         <Table>
                             <TableHeader>
-                                <TableRow>
+                                <TableRow className="hover:bg-transparent">
                                     <TableHead>YouTube Creator</TableHead>
                                     <TableHead>YouTube Channel</TableHead>
                                     <TableHead></TableHead>
@@ -92,7 +92,10 @@ export default function PendingRequestComponent({
                             </TableHeader>
                             <TableBody>
                                 {editorRequests.map((editor, index) => (
-                                    <TableRow key={index}>
+                                    <TableRow
+                                        key={index}
+                                        className="hover:bg-transparent"
+                                    >
                                         <TableCell>
                                             <div className="flex justify-start items-center space-x-4">
                                                 <Image
@@ -140,6 +143,7 @@ export default function PendingRequestComponent({
                                             <div className="flex justify-end items-center space-x-4">
                                                 <Button
                                                     className="font-sans font-semibold bg-green-400"
+                                                    variant={'approve'}
                                                     onClick={() => {
                                                         handleRequest(
                                                             editor.requestId,
@@ -151,6 +155,7 @@ export default function PendingRequestComponent({
                                                 </Button>
                                                 <Button
                                                     className="font-sans font-semibold bg-red-400"
+                                                    variant={'reject'}
                                                     onClick={() => {
                                                         handleRequest(
                                                             editor.requestId,

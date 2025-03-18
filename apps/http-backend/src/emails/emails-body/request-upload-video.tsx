@@ -63,9 +63,9 @@ export default function RequestVideoUploadEmail({
                 <Row>
                     <Heading as="h2">
                         <Button
-                            href={`${process.env.FRONTEND_APP_DOMAIN_FOR_EMAIL}/review-request?id=${requestId}`}
+                            href={`${process.env.FRONTEND_APP_DOMAIN_FOR_EMAIL}/dashboard`}
                             style={{
-                                backgroundColor: '#fbb87e',
+                                backgroundColor: '#805ad5',
                                 color: '#fff',
                                 padding: '10px 20px',
                                 borderRadius: '5px',

@@ -4,7 +4,6 @@
 
 #### Create Bridge : [https://creatorbridge.rkc.digitial]
 
-
 ## Instant Docker Setup
 
 > [!NOTE]  
@@ -52,7 +51,6 @@ To run this project, you will need to add the following environment variables to
 `NEXT_PUBLIC_BACKEND_URL`
 `AUTH_SECRET`
 
-
 ## Features
 
 - **Seamless YouTube Integration**: Simple one-click YouTube channel connection, allowing creators to stream directly to their editors.
@@ -91,7 +89,6 @@ To run this project, you will need to add the following environment variables to
 **Server:** Node, Express, Typescript, CORS, JsonWebToken
 
 **Database:** Postgres SQL, Prisma ORM
-
 
 ## License
 

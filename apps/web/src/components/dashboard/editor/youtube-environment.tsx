@@ -123,7 +123,7 @@ export default function YoutubeEnvironmentComponent({
                         YouTube Environments
                     </h1>
                     <div className="bg-muted rounded-lg px-6 py-4">
-                        <p className="text-center text-primary font-bold text-xl mt-2">
+                        <p className="text-center text-primary font-bold text-xl mt-2 bg-purple-900/30 shadow-sm shadow-gray-400/70 rounded-lg px-6 py-4">
                             No YouTube Environments Found
                         </p>
                     </div>
