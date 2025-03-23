@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/auth';
 import {
     Footer,
+    Navbar,
     HeaderComponent,
     FeaturesComponent,
     WorkflowComponent,
@@ -20,6 +21,7 @@ export default async function LandingPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 text-white">
+            <Navbar />
             <HeaderComponent />
             <FeaturesComponent />
             <WorkflowComponent />

@@ -61,8 +61,8 @@ export default function Footer() {
                                     text: 'Privacy Policy',
                                 },
                                 {
-                                    href: '/terms-and-condition',
-                                    text: 'Terms of Service',
+                                    href: '/terms-and-conditions',
+                                    text: 'Terms & Conditions',
                                 },
                                 { href: '/security', text: 'Security' },
                                 { href: '/contact', text: 'Contact' },
